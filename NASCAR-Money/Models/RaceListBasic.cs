@@ -4,8 +4,8 @@ namespace NASCAR_Money.Models
 {
     public class RaceListBasic
     {
-        public List<Series2> series_2 { get; set; }
         public List<Series1> series_1 { get; set; }
+        public List<Series2> series_2 { get; set; }
         public List<Series3> series_3 { get; set; }
     }
 
