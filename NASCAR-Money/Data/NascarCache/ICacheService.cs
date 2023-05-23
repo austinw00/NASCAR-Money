@@ -9,7 +9,6 @@ namespace NASCAR_Money.Data.NascarCache
         Task<LapAverages> GetLapAveragesAsync(int year, int seriesId, int eventId);
         Task<WeekendFeed> GetWeekendFeedAsync(int year, int seriesId, int eventId);
         Task<RaceListBasic> GetRaceListBasicAsync(int year);
-        Task<ScheduleCombinedFeed> GetScheduleCombinedFeedAsync(int year, int seriesId)
-
+        Task<ScheduleCombinedFeed> GetScheduleCombinedFeedAsync(int year, int seriesId);
     }
 }
