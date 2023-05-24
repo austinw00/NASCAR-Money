@@ -11,6 +11,31 @@ namespace NASCAR_Money.Helpers
             _cacheService = cacheService;
         }
 
+        //public async Task<int> GetUpcomingAllSeriesEventId(DateTime time) TODO finsh
+        //{
+        //    AllSeriesEventIds allSeriesEventId = new AllSeriesEventIds();
+        //    RaceListBasic raceListBasic = await _cacheService.GetRaceListBasicAsync(time.Year);
+        //    List<Series1> cupList = raceListBasic.series_1;
+        //    cupList.OrderBy(r => r.date_scheduled);
+        //    foreach (var race in cupList)
+        //    {
+        //        if (race.date_scheduled > time)
+        //        {
+        //            allSeriesEventId.CupSeriesEventId = race.race_id;
+        //        }
+        //    }
+        //    List<Series2> cupList = raceListBasic.series_1;
+        //    cupList.OrderBy(r => r.date_scheduled);
+        //    foreach (var race in cupList)
+        //    {
+        //        if (race.date_scheduled > time)
+        //        {
+        //            allSeriesEventId.CupSeriesEventId = race.race_id;
+        //        }
+        //    }
+        //    return -1;
+        //}
+
         public async Task<int> GetUpcomingCupEventId(DateTime time)
         {
             RaceListBasic raceListBasic = await _cacheService.GetRaceListBasicAsync(time.Year);
@@ -47,7 +72,7 @@ namespace NASCAR_Money.Helpers
         public async Task<int> GetUpcomingTruckEventId(DateTime time)
         {
             RaceListBasic raceListBasic = await _cacheService.GetRaceListBasicAsync(time.Year);
-            List<Series1> truckList = raceListBasic.series_1;
+            List<Series3> truckList = raceListBasic.series_3;
             truckList.OrderBy(r => r.date_scheduled);
             foreach (var race in truckList)
             {
@@ -75,6 +100,38 @@ namespace NASCAR_Money.Helpers
                 }
             }
             // No previous races found, return -1 or throw an exception
+            return -1;
+        }
+
+        public async Task<int> GetPreviousXfinityEventId(DateTime time)
+        {
+            RaceListBasic raceListBasic = await _cacheService.GetRaceListBasicAsync(time.Year);
+            List<Series2> xfinityList = raceListBasic.series_2;
+            xfinityList = xfinityList.OrderByDescending(r => r.date_scheduled).ToList();
+
+            foreach (var race in xfinityList)
+            {
+                if (race.date_scheduled < time)
+                {
+                    return race.race_id;
+                }
+            }
+            return -1;
+        }
+
+        public async Task<int> GetPreviousTruckEventId(DateTime time)
+        {
+            RaceListBasic raceListBasic = await _cacheService.GetRaceListBasicAsync(time.Year);
+            List<Series3> truckHouse = raceListBasic.series_3;
+            truckHouse = truckHouse.OrderByDescending(r => r.date_scheduled).ToList();
+
+            foreach (var race in truckHouse)
+            {
+                if (race.date_scheduled < time)
+                {
+                    return race.race_id;
+                }
+            }
             return -1;
         }
 
