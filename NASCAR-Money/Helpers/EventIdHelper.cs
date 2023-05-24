@@ -3,7 +3,7 @@ using NASCAR_Money.Models;
 
 namespace NASCAR_Money.Helpers
 {
-    public class EventIdHelper
+    public class EventIdHelper : IEventIdHelper
     {
         private readonly ICacheService _cacheService;
         public EventIdHelper(ICacheService cacheService)
@@ -32,7 +32,7 @@ namespace NASCAR_Money.Helpers
         public async Task<int> GetUpcomingXfinityEventId(DateTime time)
         {
             RaceListBasic raceListBasic = await _cacheService.GetRaceListBasicAsync(time.Year);
-            List<Series1> xfinityList = raceListBasic.series_1;
+            List<Series2> xfinityList = raceListBasic.series_2;
             xfinityList.OrderBy(r => r.date_scheduled);
             foreach (var race in xfinityList)
             {
@@ -58,6 +58,26 @@ namespace NASCAR_Money.Helpers
             }
             return -1;
         }
+
+        public async Task<int> GetPreviousCupEventId(DateTime time)
+        {
+            RaceListBasic raceListBasic = await _cacheService.GetRaceListBasicAsync(time.Year);
+            List<Series1> cupList = raceListBasic.series_1;
+            cupList = cupList.OrderByDescending(r => r.date_scheduled).ToList();
+
+            foreach (var race in cupList)
+            {
+                // Check if the race_time is before the given time
+                if (race.date_scheduled < time)
+                {
+                    // This race is the most recent one before the given time, so return its race_id
+                    return race.race_id;
+                }
+            }
+            // No previous races found, return -1 or throw an exception
+            return -1;
+        }
+
 
     }
 }

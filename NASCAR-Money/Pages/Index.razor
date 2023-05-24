@@ -1,4 +1,6 @@
 ﻿@page "/"
+@inject NASCAR_Money.Helpers.IEventIdHelper EventIdHelper
+@using System
 
 <PageTitle>Index</PageTitle>
 
@@ -6,4 +8,21 @@
 
 Welcome to your new app.
 
+<p>
+    The upcoming cup event id: @upcomingCupEventId
+    The upcoming cup event id: @previousCupEventId
+
+</p>
+
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+    private int upcomingCupEventId;
+    private int previousCupEventId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        upcomingCupEventId = await EventIdHelper.GetUpcomingXfinityEventId(DateTime.Now);
+        previousCupEventId = await EventIdHelper.GetPreviousCupEventId(DateTime.Now);
+    }
+}
