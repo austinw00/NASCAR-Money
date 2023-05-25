@@ -1,0 +1,54 @@
+﻿@page "/driver/{DriverId}"
+@inject NASCAR_Money.Helpers.IDriversHelper DriversHelper
+@using NASCAR_Money.Models
+@using MudBlazor
+<style>
+    .driver-image {
+        width: 20px;
+        height: auto;
+    }
+</style>
+@if(driverData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudContainer>
+    <MudGrid>
+        <MudItem xs="12" sm="4">
+            <MudCard>
+                    <MudItem xs="3" sm="3">
+                        <img src="@driverData.Firesuit_Image" alt="Driver Image" class="driver-image" />
+                    </MudItem>
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">@driverData.Full_Name</MudText>
+                    <MudText Typo="Typo.body1">@driverData.Hobbies</MudText>
+                    <MudText Typo="Typo.body1">@driverData.Team</MudText>
+                    <MudText Typo="Typo.body1">@driverData.Residing_City</MudText>
+                    //...add more fields here as needed...
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+}
+
+
+@code {
+    [Parameter]
+    public string DriverId { get; set; }
+
+    private int driverIdAsInt;
+    private DriverData driverData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(DriverId))
+        {
+            driverIdAsInt = Int32.Parse(DriverId);
+        }
+        driverData = await DriversHelper.GetDriverById(driverIdAsInt);
+    }
+}
+

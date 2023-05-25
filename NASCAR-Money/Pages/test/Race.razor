@@ -1,0 +1,22 @@
+﻿@page "/race"
+
+@inject NASCAR_Money.Data.NascarCache.ICacheService CacheService
+@using System
+@using NASCAR_Money.Models;
+@if (raceDetails != null)
+{
+    <WeekendRaceComponent RaceDetails="raceDetails" />
+}
+
+@code{
+    private WeekendRace raceDetails;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var weekendFeed = await CacheService.GetWeekendFeedAsync(year: 2023, seriesId: 1, eventId: 5287); // replace with actual parameters
+
+        // Assuming the WeekendRace object is a property of WeekendFeed
+        // Adjust this line based on the actual structure of your WeekendFeed object
+        raceDetails = weekendFeed.weekend_race.FirstOrDefault();
+    }
+}

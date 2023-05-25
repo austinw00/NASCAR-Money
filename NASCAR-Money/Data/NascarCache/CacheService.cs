@@ -109,6 +109,20 @@ namespace NASCAR_Money.Data.NascarCache
             return null;
         }
 
+        public async Task<Drivers> GetDriversAsync()
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync("https://cf.nascar.com/cacher/drivers.json");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonContent = await response.Content.ReadAsStringAsync();
+                Drivers drivers = JsonConvert.DeserializeObject<Drivers>(jsonContent);
+                return drivers;
+            }
+
+            return null;
+        }
+        
 
     }
 }

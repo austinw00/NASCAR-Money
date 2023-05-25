@@ -1,0 +1,134 @@
+﻿@page "/currentdriverslist"
+@inject NASCAR_Money.Helpers.IDriversHelper DriversHelper
+@inject NavigationManager NavigationManager
+
+@using NASCAR_Money.Models
+@using MudBlazor
+
+@if (cupDrivers == null || xfinityDrivers == null || truckDrivers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <style>
+        .driver-badge {
+            width: 20px;
+            height: auto;
+        }
+    </style>
+
+    <MudGrid>
+        <MudItem xs="12" sm="4">
+        <img src="https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_cup_series_logo.svg" alt="Cup Logo" style="padding: 15%; display: block; margin: auto;" />
+            <MudGrid>
+                <MudItem xs="12" sm="12">
+                    <MudTextField Label="Search by name" Value="@searchValueCup" ValueChanged="(string value) => FilterByNameCup(value)"></MudTextField>
+                </MudItem>
+            </MudGrid>
+        @foreach (var driver in cupDrivers)
+        {
+            <MudGrid>
+                <MudItem xs="6" sm="6">
+                    <MudText>@driver.Full_Name</MudText>
+                </MudItem>
+                <MudItem xs="3" sm="3">
+                    <img src="@driver.Badge_Image" alt="Driver Badge" class="driver-badge" />
+                </MudItem>
+                    <MudItem xs="3" sm="3">
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID))">Details</MudButton>
+                    </MudItem>
+            </MudGrid>
+        }
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <img src="https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_xfinity_series_logos-1.svg" alt="Xfinity Logo" style="padding: 15%; display: block; margin: auto;" />\
+            <MudGrid>
+                <MudItem xs="12" sm="12">
+                    <MudTextField Label="Search by name" Value="@searchValueXfinity" ValueChanged="(string value) => FilterByNameXfinity(value)"></MudTextField>
+                </MudItem>
+            </MudGrid>
+            @foreach (var driver in xfinityDrivers)
+            {
+                <MudGrid>
+                    <MudItem xs="6" sm="6">
+                        <MudText>@driver.Full_Name</MudText>
+                    </MudItem>
+                    <MudItem xs="3" sm="3">
+                        <img src="@driver.Badge_Image" alt="Driver Badge" class="driver-badge" />
+                    </MudItem>
+                    <MudItem xs="3" sm="3">
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small">Details</MudButton>
+                    </MudItem>
+            </MudGrid>
+            }
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <img src="https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_craftsman_truck_series_logo.svg" alt="Truck Logo" style="padding: 15%; display: block; margin: auto;" />
+            <MudGrid>
+                <MudItem xs="12" sm="12">
+                    <MudTextField Label="Search by name" Value="@searchValueTruck" ValueChanged="(string value) => FilterByNameTruck(value)"></MudTextField>
+                </MudItem>
+            </MudGrid>
+            @foreach (var driver in truckDrivers)
+            {
+                <MudGrid>
+                    <MudItem xs="6" sm="6">
+                        <MudText>@driver.Full_Name</MudText>
+                    </MudItem>
+                    <MudItem xs="3" sm="3">
+                        <img src="@driver.Badge_Image" alt="Driver Badge" class="driver-badge" />
+                    </MudItem>
+                    <MudItem xs="3" sm="3">
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small">Details</MudButton>
+                    </MudItem>
+                </MudGrid>
+            }
+        </MudItem>
+    </MudGrid>
+
+}
+
+@code {
+    private List<DriverData> cupDrivers;
+    private List<DriverData> xfinityDrivers;
+    private List<DriverData> truckDrivers;
+
+    private string searchValueCup = "";
+    private string searchValueXfinity = "";
+    private string searchValueTruck = "";
+
+    private void FilterByNameCup(string value)
+    {
+        searchValueCup = value;
+        cupDrivers = cupDrivers.Where(driver => driver.Full_Name.Contains(searchValueCup, StringComparison.OrdinalIgnoreCase)).ToList();
+        StateHasChanged();
+    }
+
+    private void FilterByNameXfinity(string value)
+    {
+        searchValueXfinity = value;
+        xfinityDrivers = xfinityDrivers.Where(driver => driver.Full_Name.Contains(searchValueXfinity, StringComparison.OrdinalIgnoreCase)).ToList();
+        StateHasChanged();
+    }
+
+    private void FilterByNameTruck(string value)
+    {
+        searchValueTruck = value;
+        truckDrivers = truckDrivers.Where(driver => driver.Full_Name.Contains(searchValueTruck, StringComparison.OrdinalIgnoreCase)).ToList();
+        StateHasChanged();
+    }
+
+    private void ShowDetails(int driverId)
+    {
+        NavigationManager.NavigateTo($"/driver/{driverId}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        cupDrivers = await DriversHelper.GetCurrentCupDriversList();
+        xfinityDrivers = await DriversHelper.GetCurrentXfinityDriversList();
+        truckDrivers = await DriversHelper.GetCurrentTruckDriversList();
+    }
+}
+

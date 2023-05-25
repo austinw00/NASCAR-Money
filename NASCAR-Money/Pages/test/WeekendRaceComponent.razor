@@ -1,0 +1,34 @@
+﻿@inherits MudComponentBase
+@using NASCAR_Money.Models;
+@code {
+    [Parameter]
+    public WeekendRace RaceDetails { get; set; }
+}
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@RaceDetails.race_name</MudText>
+            <MudText Typo="Typo.body2">@RaceDetails.race_date.ToShortDateString()</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudList>
+            <MudListItem>
+                <MudText>Track: @RaceDetails.track_name</MudText>
+            </MudListItem>
+            <MudListItem>
+                <MudText>Scheduled Laps: @RaceDetails.scheduled_laps</MudText>
+            </MudListItem>
+            <MudListItem>
+                <MudText>Actual Laps: @RaceDetails.actual_laps</MudText>
+            </MudListItem>
+            <MudListItem>
+                <MudText>Average Speed: @RaceDetails.average_speed</MudText>
+            </MudListItem>
+            <MudListItem>
+                <MudText>Attendance: @RaceDetails.attendance</MudText>
+            </MudListItem>
+        </MudList>
+    </MudCardContent>
+</MudCard>
