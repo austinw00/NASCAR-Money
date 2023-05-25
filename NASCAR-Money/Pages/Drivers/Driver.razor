@@ -3,8 +3,8 @@
 @using NASCAR_Money.Models
 @using MudBlazor
 <style>
-    .driver-image {
-        width: 20px;
+    .driverImages {
+        width: 120px;
         height: auto;
     }
 </style>
@@ -16,17 +16,21 @@ else
 {
     <MudContainer>
     <MudGrid>
-        <MudItem xs="12" sm="4">
-            <MudCard>
-                    <MudItem xs="3" sm="3">
-                        <img src="@driverData.Firesuit_Image" alt="Driver Image" class="driver-image" />
-                    </MudItem>
+        <MudItem xs="12" sm="12">
+            <MudCard>     
                 <MudCardContent>
+                    <img src="@driverData.Firesuit_Image" alt="Driver Image" class="driverImages" />
+                    <img src="@driverData.Badge_Image" alt="Driver Badge" class="driverImages" />
+                    <img src="@driverData.Manufacturer" alt="Manufacturer" class="driverImages" />
+
                     <MudText Typo="Typo.h5">@driverData.Full_Name</MudText>
-                    <MudText Typo="Typo.body1">@driverData.Hobbies</MudText>
                     <MudText Typo="Typo.body1">@driverData.Team</MudText>
-                    <MudText Typo="Typo.body1">@driverData.Residing_City</MudText>
-                    //...add more fields here as needed...
+                    <MudText Typo="Typo.body1">@driverData.Hometown_City</MudText>
+                    <MudText Typo="Typo.body1">@driverData.Twitter_Handle add link</MudText>
+                    <MudText Typo="Typo.body1">Crew Chief @driverData.Crew_Chief add rr link</MudText>
+                  
+
+
                 </MudCardContent>
             </MudCard>
         </MudItem>

@@ -58,7 +58,7 @@ else
                         <img src="@driver.Badge_Image" alt="Driver Badge" class="driver-badge" />
                     </MudItem>
                     <MudItem xs="3" sm="3">
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small">Details</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID))">Details</MudButton>
                     </MudItem>
             </MudGrid>
             }
@@ -80,7 +80,7 @@ else
                         <img src="@driver.Badge_Image" alt="Driver Badge" class="driver-badge" />
                     </MudItem>
                     <MudItem xs="3" sm="3">
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small">Details</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID))">Details</MudButton>
                     </MudItem>
                 </MudGrid>
             }
