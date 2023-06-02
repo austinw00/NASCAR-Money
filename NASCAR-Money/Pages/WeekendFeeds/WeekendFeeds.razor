@@ -1,0 +1,65 @@
+﻿@page "/weekendFeed/{year}/{seriesId}/{eventId}"
+@inject NASCAR_Money.Data.NascarCache.ICacheService CacheService
+@using NASCAR_Money.Models
+@using MudBlazor
+@if(weekendFeed == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var raceEvent in weekendFeed.weekend_race)
+    {
+    <Layout>
+    <MudContainer>
+        <MudGrid>
+            <MudItem xs="12" sm="4">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6">@raceEvent.race_name</MudText>
+                        <MudText>@raceEvent.track_name</MudText>
+                                <MudText>Race Date: @raceEvent.race_date.ToString("dd/MM/yyyy")</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        @*<MudButton Link="/race/@currentRace.race_id">More Info</MudButton>*@
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+    </Layout>
+    }
+}
+
+
+@code {
+    [Parameter]
+    public string Year { get; set; }
+    [Parameter]
+    public string SeriesId { get; set; }
+    [Parameter]
+    public string EventId { get; set; }
+    
+    private int yearAsInt;
+    private int seriesIdAsInt;
+    private int eventIdAsInt;
+
+    private WeekendFeed weekendFeed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(Year))
+        {
+            yearAsInt = Int32.Parse(Year);
+        }
+        if (!string.IsNullOrEmpty(SeriesId))
+        {
+            seriesIdAsInt = Int32.Parse(SeriesId);
+        }
+        if (!string.IsNullOrEmpty(EventId))
+        {
+                eventIdAsInt = Int32.Parse(EventId);
+        }
+            weekendFeed = await CacheService.GetWeekendFeedAsync(yearAsInt, seriesIdAsInt, eventIdAsInt);
+    }  
+}

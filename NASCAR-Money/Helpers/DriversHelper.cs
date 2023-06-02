@@ -16,8 +16,6 @@ namespace NASCAR_Money.Helpers
         {
             Drivers drivers = await _cacheService.GetDriversAsync();
             List<DriverData> driverList = drivers.response;
-            driverList.OrderBy(d => d.Last_Name);
-
             return driverList;
         }
 
@@ -25,6 +23,13 @@ namespace NASCAR_Money.Helpers
         {
             List<DriverData> driverList = await GetDriversList();
             DriverData driver = driverList.Where(d => d.Driver_ID == driverId).FirstOrDefault();
+            return driver;
+        }
+
+        public async Task<DriverData> GetDriverByMasterId(int driverId)
+        {
+            List<DriverData> driverList = await GetDriversList();
+            DriverData driver = driverList.Where(d => d.Nascar_Driver_ID == driverId).FirstOrDefault();
             return driver;
         }
 

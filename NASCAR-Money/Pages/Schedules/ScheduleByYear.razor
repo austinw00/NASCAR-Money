@@ -1,0 +1,245 @@
+﻿@page "/schedule/{year}"
+@inject NASCAR_Money.Data.NascarCache.ICacheService CacheService
+@inject NASCAR_Money.Helpers.IDriversHelper DriversHelper
+@inject NavigationManager NavigationManager
+
+@using NASCAR_Money.Models
+@using MudBlazor
+
+
+
+@if (cupSchedule == null || xfinitySchedule == null || truckSchedule == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+        @* Logos and Button *@
+    <MudGrid>
+        <MudItem xs="12" sm="4">
+            <img src="@xfinitySvgUrl" class="logo pa-3" @onclick="() => ShowXfinitySchedule()" style="color:@xfinityColor" />
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <img src="@cupSvgUrl" class="logo" @onclick="() => ShowCupSchedule()" style="color:@cupColor" />
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <img src="@truckSvgUrl" class="logo" @onclick="() => ShowTruckSchedule()" style="color:@truckColor" />
+        </MudItem>
+    </MudGrid>
+
+    <MudTimeline TimelinePosition="TimelinePosition.Right">
+        @if (selectedSchedule == ScheduleType.Cup)
+        {
+            foreach (var race in cupSchedule)
+            {
+                @if (race.winner_driver_id != null)
+                {
+                    <MudTimelineItem Color="@((race.winner_driver_id == null) ? Color.Default : Color.Primary)">
+                        <ItemContent>
+                            <MudPaper Class="pa-3">
+                                @race.race_name <MudChip Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@GetDriverName(@race.winner_driver_id)</MudChip>
+                            </MudPaper>
+                        </ItemContent>
+                        <ItemOpposite>
+                            <MudPaper Class="pa-3">
+                                @race.winner_driver_id
+                            </MudPaper>
+                        </ItemOpposite>
+                    </MudTimelineItem>
+                }
+                else
+                {
+                    <MudTimelineItem Color="@((race.winner_driver_id == null) ? Color.Default : Color.Primary)">
+                        <ItemContent>
+                            <MudPaper Class="pa-3">
+                                @race.race_name
+                            </MudPaper>
+                        </ItemContent>
+                    </MudTimelineItem>
+                }
+            }
+        }
+    </MudTimeline>
+
+    <MudTimeline TimelinePosition="TimelinePosition.Right">
+        @if (selectedSchedule == ScheduleType.Xfinity)
+        {
+            foreach (var race in xfinitySchedule)
+            {
+                @if (race.winner_driver_id != null)
+                {
+                    <MudTimelineItem Color="@((race.winner_driver_id == null) ? Color.Default : Color.Primary)">
+                        <ItemContent>
+                            <MudPaper Class="pa-3">
+                                @race.race_name <MudChip Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@GetDriverName(@race.winner_driver_id)</MudChip>
+                            </MudPaper>
+                        </ItemContent>
+                        <ItemOpposite>
+                            <MudPaper Class="pa-3">
+                                @race.winner_driver_id
+                            </MudPaper>
+                        </ItemOpposite>
+                    </MudTimelineItem>
+                }
+                else
+                {
+                    <MudTimelineItem Color="@((race.winner_driver_id == null) ? Color.Default : Color.Primary)">
+                        <ItemContent>
+                            <MudPaper Class="pa-3">
+                                @race.race_name
+                            </MudPaper>
+                        </ItemContent>
+                    </MudTimelineItem>
+                }
+            }
+        }
+    </MudTimeline>
+
+    <MudTimeline TimelinePosition="TimelinePosition.Right">
+        @if (selectedSchedule == ScheduleType.Truck)
+        {
+            foreach (var race in truckSchedule)
+            {
+                @if (race.winner_driver_id != null)
+                {
+                    <MudTimelineItem Color="@((race.winner_driver_id == null) ? Color.Default : Color.Primary)">
+                        <ItemContent>
+                            <MudCard Class="pa-3">
+                                <MudCardHeader>@race.race_name</MudCardHeader>
+                                <MudCardContent>
+                                    <MudChip Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@GetDriverName(@race.winner_driver_id)</MudChip>
+                                </MudCardContent>
+                            </MudCard>
+                        </ItemContent>
+                        <ItemOpposite>
+                            <MudPaper Class="pa-3">
+                                @race.winner_driver_id
+                            </MudPaper>
+                        </ItemOpposite>
+                    </MudTimelineItem>
+                }
+                else
+                {
+                    <MudTimelineItem Color="@((race.winner_driver_id == null) ? Color.Default : Color.Primary)">
+                        <ItemContent>
+                            <MudPaper Class="pa-3">
+                                @race.race_name
+                            </MudPaper>
+                        </ItemContent>
+                    </MudTimelineItem>
+                }
+            }
+        }
+    </MudTimeline>
+}
+
+@code {
+    [Parameter]
+    public string Year { get; set; }
+
+    private Dictionary<int, string> driverNames = new Dictionary<int, string>();
+
+
+    private RaceListBasic raceList;
+    private List<Series1> cupSchedule;
+    private List<Series2> xfinitySchedule;
+    private List<Series3> truckSchedule;
+
+    private int yearAsInt;
+
+    string cupSvgUrl = "https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_cup_series_logo.svg";
+    string xfinitySvgUrl = "https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_xfinity_series_logos-1.svg";
+    string truckSvgUrl = "https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_craftsman_truck_series_logo.svg";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(Year))
+        {
+            yearAsInt = Int32.Parse(Year);
+        }
+
+        raceList = await CacheService.GetRaceListBasicAsync(yearAsInt);
+
+        cupSchedule = raceList.series_1;
+        xfinitySchedule = raceList.series_2;
+        truckSchedule = raceList.series_3;
+
+        foreach (var race in cupSchedule)
+        {
+            if (race.winner_driver_id.HasValue && !driverNames.ContainsKey(race.winner_driver_id.Value))
+            {
+                var driverName = await getDriverName(race.winner_driver_id.Value);
+                driverNames[race.winner_driver_id.Value] = driverName;
+            }
+        }
+        
+        foreach (var race in xfinitySchedule)
+        {
+            if (race.winner_driver_id.HasValue && !driverNames.ContainsKey(race.winner_driver_id.Value))
+            {
+                var driverName = await getDriverName(race.winner_driver_id.Value);
+                driverNames[race.winner_driver_id.Value] = driverName;
+            }
+        }
+
+        foreach (var race in truckSchedule)
+        {
+            if (race.winner_driver_id.HasValue && !driverNames.ContainsKey(race.winner_driver_id.Value))
+            {
+                var driverName = await getDriverName(race.winner_driver_id.Value);
+                driverNames[race.winner_driver_id.Value] = driverName;
+            }
+        }
+    }
+
+    private async Task<string> getDriverName(int driverId)
+    {
+        var driver = await DriversHelper.GetDriverByMasterId(driverId);
+        return driver.Full_Name;
+    }
+
+    private string GetDriverName(int? driverId)
+    {
+        if (driverId.HasValue && driverNames.ContainsKey(driverId.Value))
+        {
+            return driverNames[driverId.Value];
+        }
+        else
+        {
+            return "Unknown Driver";
+        }
+    }
+
+    enum ScheduleType { None, Cup, Xfinity, Truck }
+    ScheduleType selectedSchedule = ScheduleType.None;
+
+    Color cupColor = Color.Success;
+    Color xfinityColor = Color.Default;
+    Color truckColor = Color.Warning;
+
+    void ShowCupSchedule()
+    {
+        selectedSchedule = ScheduleType.Cup;
+        cupColor = Color.Primary;
+        xfinityColor = Color.Default;
+        truckColor = Color.Default;
+    }
+
+    void ShowXfinitySchedule()
+    {
+        selectedSchedule = ScheduleType.Xfinity;
+        cupColor = Color.Default;
+        xfinityColor = Color.Primary;
+        truckColor = Color.Default;
+    }
+
+    void ShowTruckSchedule()
+    {
+        selectedSchedule = ScheduleType.Truck;
+        cupColor = Color.Default;
+        xfinityColor = Color.Default;
+        truckColor = Color.Primary;
+    }
+    
+}
+

@@ -12,5 +12,7 @@ namespace NASCAR_Money.Helpers
         Task<List<DriverData>> GetCurrentCupDriversList();
         Task<List<DriverData>> GetCurrentXfinityDriversList();
         Task<List<DriverData>> GetCurrentTruckDriversList();
+        Task<DriverData> GetDriverByMasterId(int driverId);
+
     }
 }

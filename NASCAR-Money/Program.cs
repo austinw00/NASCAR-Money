@@ -1,5 +1,4 @@
 using MudBlazor.Services;
-using NASCAR_Money.Data;
 using NASCAR_Money.Data.NascarCache;
 using NASCAR_Money.Helpers;
 
@@ -8,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddHttpClient<CacheService>();
 builder.Services.AddScoped<IEventIdHelper, EventIdHelper>();
