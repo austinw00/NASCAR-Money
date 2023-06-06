@@ -9,6 +9,7 @@ namespace NASCAR_Money.Services
         Task<List<DriverAverageStats>> GetDriverAverageStats(
         List<int> raceSeasons = null,
         int? seriesId = null,
-        List<string> trackNames = null);
+        List<string> trackNames = null,
+        Dictionary<string, double> trackWeights = null);
     }
 }

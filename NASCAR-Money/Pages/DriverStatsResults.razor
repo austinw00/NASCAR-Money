@@ -12,34 +12,32 @@
 }
 else
 {
+    <MudPaper Class="pa-4">
+        <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels"></MudChart>
+    </MudPaper>
     <MudDataGrid Items="@driverStats" Striped="true" Bordered="true" Hover="true" PageSize="20">
         <ToolBarContent>
-            <MudChipSet>
-                @foreach (var series in raceSeasons)
-                {
-                    <MudChip Text="orange" Color="Color.Secondary">@series</MudChip>
-                }
-                @foreach(var track in trackNames)
-                {
-                    <MudChip Text="blue" Color="Color.Info">@track</MudChip>
-                }
-            </MudChipSet>
+            <!-- ToolBarContent content here -->
         </ToolBarContent>
         <Columns>
             <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
-            <PropertyColumn Property="x => x.AverageStartPosition" Title="Start" />
-            <PropertyColumn Property="x => x.AveragePosition" Title="Average Position" />
-            <PropertyColumn Property="x => x.AverageEndPosition" Title="Finish" />
-            <PropertyColumn Property="x => x.AveragePasses" Title="Passes" />
-            <PropertyColumn Property="x => x.AverageFastLaps" Title="Fast Laps" />
-            <PropertyColumn Property="x => x.AverageLeadLaps" Title="Lead Laps" />
-            <PropertyColumn Property="x => x.AverageRating" Title="Rating" />
+            <PropertyColumn Property="x => Math.Round(x.AverageStartPosition.Value, 1)" Title="Start" />
+            <PropertyColumn Property="x => Math.Round(x.AveragePosition.Value, 1)" Title="Average Position" />
+            <PropertyColumn Property="x => Math.Round(x.AverageEndPosition.Value, 1)" Title="Finish" />
+            <PropertyColumn Property="x => Math.Round(x.AveragePasses.Value, 1)" Title="Passes" />
+            <PropertyColumn Property="x => Math.Round(x.AverageFastLaps.Value, 1)" Title="Fast Laps" />
+            <PropertyColumn Property="x => Math.Round(x.AverageLeadLaps.Value, 1)" Title="Lead Laps" />
+            <PropertyColumn Property="x => Math.Round(x.AverageRating.Value, 1)" Title="Rating" />
         </Columns>
     </MudDataGrid>
+
 
 }
 
 @code {
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private string[] labels;
+    private double[] data;
     private string? driverFullName;
     private int? seriesId;
     private List<int> raceSeasons = new List<int>();
@@ -59,7 +57,23 @@ else
         raceSeasons = query["raceSeasons"]?.Split(',').Select(int.Parse).ToList() ?? new List<int>();
         trackNames = query["trackNames"]?.Split(',').ToList() ?? new List<string>();
 
+        // Parse track weights
+        var trackWeightPairs = query["trackWeights"]?.Split(',') ?? new string[0];
+        var trackWeights = new Dictionary<string, double>();
+        foreach (var pair in trackWeightPairs)
+        {
+            var parts = pair.Split(':');
+            if (parts.Length == 2 && double.TryParse(parts[1], out var weight))
+            {
+                trackWeights[parts[0]] = weight;
+            }
+        }
+
+        labels = trackNames.ToArray();
+        data = trackWeights.Values.Take(labels.Count()).ToArray();
+
         // Now fetch the stats using these parameters
-        driverStats = await DriverService.GetDriverAverageStats(raceSeasons, seriesId, trackNames);
+        driverStats = await DriverService.GetDriverAverageStats(raceSeasons, seriesId, trackNames, trackWeights);
     }
+
 }

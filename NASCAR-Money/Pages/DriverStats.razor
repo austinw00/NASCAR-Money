@@ -2,6 +2,7 @@
 @inject NASCAR_Money.Services.IDriverService DriverResultService
 @inject NASCAR_Money.Services.ITrackService TrackService
 @inject NavigationManager NavigationManager
+@using System.Net;
 
 
 @using NASCAR_Money.Models;
@@ -33,7 +34,16 @@ else
         }
     </MudSelect>
 
-        <MudButton OnClick="(() => GetStats())">Get Stats</MudButton>
+        @foreach (var track in SelectedTrackNames)
+        {
+            <div>
+                <label>@($"Weight for {track}")</label>
+                <MudSlider @bind-Value="trackWeights[track]" Min="0" Max="2" Step="0.05" Color="Color.Primary">Value: @trackWeights[track].ToString("F2")</MudSlider>
+            </div>
+        }
+
+
+    <MudButton OnClick="(() => GetStats())">Get Stats</MudButton>
 </MudForm>
 }
 
@@ -46,18 +56,27 @@ else
     List<DriverAverageStats>? driverStats;
     IEnumerable<int>? SelectedRaceSeasons = new List<int>();
     IEnumerable<string>? SelectedTrackNames = new List<string>();
+    Dictionary<string, double> trackWeights = new Dictionary<string, double>();
 
     protected override async Task OnInitializedAsync()
     {
         var trackList = await TrackService.GetTracks();
         tracks = trackList.Select(t => t.TrackName).ToList();
+        foreach (var track in tracks)
+        {
+            trackWeights[track] = 1.0; // default weight
+        }
     }
+
 
     private void GetStats()
     {
         var queryString = new System.UriBuilder
             {
-                Query = $"seriesId={seriesId}&raceSeasons={string.Join(',', SelectedRaceSeasons)}&trackNames={string.Join(',', SelectedTrackNames)}"
+                Query = $"seriesId={seriesId}" +
+                        $"&raceSeasons={string.Join(',', SelectedRaceSeasons)}" +
+                        $"&trackNames={string.Join(',', SelectedTrackNames)}" +
+                        $"&trackWeights={string.Join(',', trackWeights.Select(kvp => $"{kvp.Key}:{kvp.Value}"))}"
             }.Uri.Query;
 
         NavigationManager.NavigateTo($"/driverstatsresults{queryString}", true);
