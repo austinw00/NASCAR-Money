@@ -1,6 +1,8 @@
-﻿@page "/driver/{DriverId}"
+﻿@page "/driver/{DriverId}/{nascarDriverId}"
 @inject NASCAR_Money.Helpers.IDriversHelper DriversHelper
+@inject NASCAR_Money.Services.IDriverService DriverService
 @using NASCAR_Money.Models
+@using NASCAR_Money.DbModels
 @using MudBlazor
 <style>
     .driverImages {
@@ -8,13 +10,13 @@
         height: auto;
     }
 </style>
-@if(driverData == null)
+@if(driverData == null && recentFinishes == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    <MudContainer>
+<MudContainer>
     <MudGrid>
         <MudItem xs="12" sm="12">
             <MudCard>     
@@ -28,23 +30,63 @@ else
                     <MudText Typo="Typo.body1">@driverData.Hometown_City, @driverData.Hometown_State</MudText>
                     <MudText Typo="Typo.body1">@driverData.Twitter_Handle add link</MudText>
                     <MudText Typo="Typo.body1">Crew Chief @driverData.Crew_Chief add rr link</MudText>
-                  
-
-
                 </MudCardContent>
             </MudCard>
         </MudItem>
     </MudGrid>
 </MudContainer>
+
+
+    @foreach (var year in recentFinishes.Select(r => r.RaceSeason).OrderByDescending(r => r.Value).Distinct())
+    {
+        @foreach (var series in recentFinishes.Select(r => r.SeriesId).OrderBy(r => r.Value).Distinct())
+        {
+            <div style="padding-top: 5%">
+                <MudDataGrid Items="@recentFinishes.Where(r => r.RaceSeason == year && r.SeriesId == series)">
+                    <ToolBarContent>
+                        <MudText Typo="Typo.h3">@year  |</MudText>
+                        @if (series == 1)
+                        {
+                            <img src="https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_cup_series_logo.svg" alt="Cup Logo" style="width: 10%; height: auto;" />
+                        }
+                        else if (series == 2)
+                        {
+                            <img src="https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_xfinity_series_logos-1.svg" alt="Xfinity Logo" style="width: 10%; height: auto;" />
+                        }
+                        else
+                        {
+                            <img src="https://www.nascar.com/wp-content/uploads/sites/7/2023/05/10/nascar_craftsman_truck_series_logo.svg" alt="Truck Logo" style="width: 10%; height: auto;" />
+                        }
+                    </ToolBarContent>
+                    <Columns>
+                        <PropertyColumn Property="x => x.RaceSeason" Title="Season" />
+                        <PropertyColumn Property="x => x.RaceName" Title="Race" />
+                        <PropertyColumn Property="x => x.TrackName" Title="Track" />
+                        <PropertyColumn Property="x => x.StartPosition" Title="Start" />
+                        <PropertyColumn Property="x => x.AveragePosition" Title="Avg Position" />
+                        <PropertyColumn Property="x => x.EndPosition" Title="Finish" />
+                        <PropertyColumn Property="x => x.LeadLaps" Title="Lead Laps" />
+                        <PropertyColumn Property="x => x.FastLaps" Title="Fast Laps" />
+                        <PropertyColumn Property="x => x.Rating" Title="Rating" />
+                    </Columns>
+                </MudDataGrid>
+            </div> 
+        }
+    }
 }
 
 
 @code {
     [Parameter]
     public string DriverId { get; set; }
+    [Parameter]
+    public string NascarDriverId { get; set; }
 
     private int driverIdAsInt;
+    private int nascarDriverIdAsInt;
+
     private DriverData driverData;
+    private List<DriverResult> recentFinishes;
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,7 +94,13 @@ else
         {
             driverIdAsInt = Int32.Parse(DriverId);
         }
+        if (!string.IsNullOrEmpty(NascarDriverId))
+        {
+            nascarDriverIdAsInt = Int32.Parse(NascarDriverId);
+        }
         driverData = await DriversHelper.GetDriverById(driverIdAsInt);
+
+        recentFinishes = await DriverService.DriverPage(nascarDriverIdAsInt);
     }
 }
 

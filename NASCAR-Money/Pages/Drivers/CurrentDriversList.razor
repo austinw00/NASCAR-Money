@@ -36,7 +36,7 @@ else
                     <img src="@driver.Badge_Image" alt="Driver Badge" class="driver-badge" />
                 </MudItem>
                     <MudItem xs="3" sm="3">
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID))">Details</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID, driver.Nascar_Driver_ID))">Details</MudButton>
                     </MudItem>
             </MudGrid>
         }
@@ -58,7 +58,7 @@ else
                         <img src="@driver.Badge_Image" alt="Driver Badge" class="driver-badge" />
                     </MudItem>
                     <MudItem xs="3" sm="3">
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID))">Details</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID, driver.Nascar_Driver_ID))">Details</MudButton>
                     </MudItem>
             </MudGrid>
             }
@@ -80,7 +80,7 @@ else
                         <img src="@driver.Badge_Image" alt="Driver Badge" class="driver-badge" />
                     </MudItem>
                     <MudItem xs="3" sm="3">
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID))">Details</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" @onclick="(() => ShowDetails(driver.Driver_ID, driver.Nascar_Driver_ID))">Details</MudButton>
                     </MudItem>
                 </MudGrid>
             }
@@ -119,9 +119,9 @@ else
         StateHasChanged();
     }
 
-    private void ShowDetails(int driverId)
+    private void ShowDetails(int driverId, int nascarDriverId)
     {
-        NavigationManager.NavigateTo($"/driver/{driverId}");
+        NavigationManager.NavigateTo($"/driver/{driverId}/{nascarDriverId}");
     }
 
     protected override async Task OnInitializedAsync()

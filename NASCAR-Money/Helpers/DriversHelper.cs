@@ -86,5 +86,6 @@ namespace NASCAR_Money.Helpers
                 !string.IsNullOrEmpty(d.Team)).ToList();
             return currentTruckDrivers;
         }
+
     }
 }

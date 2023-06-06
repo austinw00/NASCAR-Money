@@ -1,0 +1,65 @@
+﻿@page "/driverstatsresults"
+@inject NavigationManager NavigationManager
+@inject NASCAR_Money.Services.IDriverService DriverService
+@using NASCAR_Money.Models;
+@using NASCAR_Money.DbModels;
+
+<h3>Driver Average Stats</h3>
+
+@if (driverStats == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <MudDataGrid Items="@driverStats" Striped="true" Bordered="true" Hover="true" PageSize="20">
+        <ToolBarContent>
+            <MudChipSet>
+                @foreach (var series in raceSeasons)
+                {
+                    <MudChip Text="orange" Color="Color.Secondary">@series</MudChip>
+                }
+                @foreach(var track in trackNames)
+                {
+                    <MudChip Text="blue" Color="Color.Info">@track</MudChip>
+                }
+            </MudChipSet>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
+            <PropertyColumn Property="x => x.AverageStartPosition" Title="Start" />
+            <PropertyColumn Property="x => x.AveragePosition" Title="Average Position" />
+            <PropertyColumn Property="x => x.AverageEndPosition" Title="Finish" />
+            <PropertyColumn Property="x => x.AveragePasses" Title="Passes" />
+            <PropertyColumn Property="x => x.AverageFastLaps" Title="Fast Laps" />
+            <PropertyColumn Property="x => x.AverageLeadLaps" Title="Lead Laps" />
+            <PropertyColumn Property="x => x.AverageRating" Title="Rating" />
+        </Columns>
+    </MudDataGrid>
+
+}
+
+@code {
+    private string? driverFullName;
+    private int? seriesId;
+    private List<int> raceSeasons = new List<int>();
+    private List<string> trackNames = new List<string>();
+    private List<DriverAverageStats>? driverStats;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+
+        // Parse the query string
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        // Retrieve the parameters
+        seriesId = query["seriesId"] != null ? int.Parse(query["seriesId"]) : (int?)null;
+        raceSeasons = query["raceSeasons"]?.Split(',').Select(int.Parse).ToList() ?? new List<int>();
+        trackNames = query["trackNames"]?.Split(',').ToList() ?? new List<string>();
+
+        // Now fetch the stats using these parameters
+        driverStats = await DriverService.GetDriverAverageStats(raceSeasons, seriesId, trackNames);
+    }
+}

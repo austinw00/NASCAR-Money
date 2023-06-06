@@ -1,0 +1,66 @@
+﻿@page "/driverstats"
+@inject NASCAR_Money.Services.IDriverService DriverResultService
+@inject NASCAR_Money.Services.ITrackService TrackService
+@inject NavigationManager NavigationManager
+
+
+@using NASCAR_Money.Models;
+@using NASCAR_Money.DbModels;
+
+@if (tracks == null)
+{
+    <h1>loading</h1>
+}
+else
+{
+    <MudForm @ref="form" OnValidSubmit="GetStats">
+
+    <MudNumericField @bind-Value="seriesId" Label="Series ID"></MudNumericField>
+
+    <MudSelect Label="Race Seasons" MultiSelection="true" @bind-SelectedValues="SelectedRaceSeasons">
+        <MudSelectItem Value="2018">2018</MudSelectItem>
+        <MudSelectItem Value="2019">2019</MudSelectItem>
+        <MudSelectItem Value="2020">2020</MudSelectItem>
+        <MudSelectItem Value="2021">2021</MudSelectItem>
+        <MudSelectItem Value="2022">2022</MudSelectItem>
+        <MudSelectItem Value="2023">2023</MudSelectItem>
+    </MudSelect>
+
+    <MudSelect T="string" Label="Track Names" MultiSelection="true" @bind-SelectedValues="SelectedTrackNames">
+        @foreach (var track in tracks)
+        {
+            <MudSelectItem Value="@track">@track</MudSelectItem>
+        }
+    </MudSelect>
+
+        <MudButton OnClick="(() => GetStats())">Get Stats</MudButton>
+</MudForm>
+}
+
+
+@code {
+    MudForm form;
+    string? driverFullName;
+    int? seriesId;
+    List<string>? tracks;
+    List<DriverAverageStats>? driverStats;
+    IEnumerable<int>? SelectedRaceSeasons = new List<int>();
+    IEnumerable<string>? SelectedTrackNames = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var trackList = await TrackService.GetTracks();
+        tracks = trackList.Select(t => t.TrackName).ToList();
+    }
+
+    private void GetStats()
+    {
+        var queryString = new System.UriBuilder
+            {
+                Query = $"seriesId={seriesId}&raceSeasons={string.Join(',', SelectedRaceSeasons)}&trackNames={string.Join(',', SelectedTrackNames)}"
+            }.Uri.Query;
+
+        NavigationManager.NavigateTo($"/driverstatsresults{queryString}", true);
+    }
+
+}

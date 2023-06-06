@@ -13,8 +13,15 @@ Welcome to your new app.
     The upcoming cup event id: @previousCupEventId
 
 </p>
+@if (upcomingCupEventId == null)
+{
+   <h1>loading</h1>
+}
+else
+{
+    <NASCAR_Money.Pages.Components.RaceWeekend year="2023" seriesId="1" eventId="5289"> </NASCAR_Money.Pages.Components.RaceWeekend>
+}
 
-<SurveyPrompt Title="How is Blazor working for you?" />
 
 @code {
     private int upcomingCupEventId;
@@ -22,7 +29,7 @@ Welcome to your new app.
 
     protected override async Task OnInitializedAsync()
     {
-        upcomingCupEventId = await EventIdHelper.GetUpcomingXfinityEventId(DateTime.Now);
-        previousCupEventId = await EventIdHelper.GetPreviousCupEventId(DateTime.Now);
+        upcomingCupEventId = await EventIdHelper.GetPreviousCupEventId(DateTime.Now);
+        previousCupEventId = await EventIdHelper.GetUpcomingCupEventId(DateTime.Now);
     }
 }

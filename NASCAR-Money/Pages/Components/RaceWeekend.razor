@@ -1,0 +1,39 @@
+﻿
+@using NASCAR_Money.Models
+@inject NASCAR_Money.Data.NascarCache.ICacheService CacheService
+@inject HttpClient HttpClient
+
+<MudCard>
+    <MudCardContent>
+        <MudText Typo="Typo.h5">Upcoming Race</MudText>
+        <br/>
+        <MudText>@raceInfo?.race_name</MudText>
+        <MudText>@raceInfo?.track_name</MudText>
+        <MudText>@raceInfo?.tunein_date</MudText>
+        <MudText>@raceInfo?.satellite_radio_broadcaster</MudText>
+        <MudText>@raceInfo?.series_id</MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public int year { get; set; }
+    [Parameter]
+    public int seriesId { get; set; }
+    [Parameter]
+    public int eventId { get; set; }
+    private WeekendRace raceInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await CacheService.GetWeekendFeedAsync(year, seriesId, eventId);
+            raceInfo = response.weekend_race.FirstOrDefault();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Request failed: {e.Message}");
+        }
+    }
+}
