@@ -51,7 +51,7 @@ namespace NASCAR_Money.Services
                         Rating = r.Rating,
                         LeadLaps = r.LeadLaps,
                         Passes = r.Passes,
-                        TrackName = r.TrackName
+                        TrackName = r.TrackName,
                     }).ToList()
                 })
                 .ToListAsync();
@@ -66,7 +66,13 @@ namespace NASCAR_Money.Services
                     AverageFastLaps = g.Results.Average(x => x.FastLaps * (trackWeights != null && trackWeights.ContainsKey(x.TrackName) ? trackWeights[x.TrackName] : 1)),
                     AverageRating = g.Results.Average(x => x.Rating * (trackWeights != null && trackWeights.ContainsKey(x.TrackName) ? trackWeights[x.TrackName] : 1)),
                     AverageLeadLaps = g.Results.Average(x => x.LeadLaps * (trackWeights != null && trackWeights.ContainsKey(x.TrackName) ? trackWeights[x.TrackName] : 1)),
-                    AveragePasses = g.Results.Average(x => x.Passes * (trackWeights != null && trackWeights.ContainsKey(x.TrackName) ? trackWeights[x.TrackName] : 1))
+                    AveragePasses = g.Results.Average(x => x.Passes * (trackWeights != null && trackWeights.ContainsKey(x.TrackName) ? trackWeights[x.TrackName] : 1)),
+                    WinFinishes = g.Results.Count(x => x.EndPosition <= 1),
+                    Top3Finishes = g.Results.Count(x => x.EndPosition <= 3),
+                    Top5Finishes = g.Results.Count(x => x.EndPosition <= 5),
+                    Top10Finishes = g.Results.Count(x => x.EndPosition <= 10),
+                    Top20Finishes = g.Results.Count(x => x.EndPosition <= 20),
+                    SampleSize = g.Results.Count
                 })
                 .ToList();
 

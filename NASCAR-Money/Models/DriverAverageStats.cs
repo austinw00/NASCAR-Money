@@ -10,6 +10,12 @@
         public double? AverageLeadLaps { get; set; }
         public double? AverageFastLaps { get; set; }
         public double? AveragePasses { get; set; }
+        public int? WinFinishes { get; set; }
+        public int? Top3Finishes { get; set; }
+        public int? Top5Finishes { get; set; }
+        public int? Top10Finishes { get; set; }
+        public int? Top20Finishes { get; set; }
+        public int? SampleSize { get; set; }
 
     }
 }

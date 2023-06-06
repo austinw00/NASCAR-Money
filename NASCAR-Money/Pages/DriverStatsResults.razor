@@ -12,24 +12,45 @@
 }
 else
 {
-    <MudPaper Class="pa-4">
+    <MudPaper Class="pa-4" Elevation="3">
         <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels"></MudChart>
     </MudPaper>
-    <MudDataGrid Items="@driverStats" Striped="true" Bordered="true" Hover="true" PageSize="20">
-        <ToolBarContent>
-            <!-- ToolBarContent content here -->
-        </ToolBarContent>
-        <Columns>
-            <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
-            <PropertyColumn Property="x => Math.Round(x.AverageStartPosition.Value, 1)" Title="Start" />
-            <PropertyColumn Property="x => Math.Round(x.AveragePosition.Value, 1)" Title="Average Position" />
-            <PropertyColumn Property="x => Math.Round(x.AverageEndPosition.Value, 1)" Title="Finish" />
-            <PropertyColumn Property="x => Math.Round(x.AveragePasses.Value, 1)" Title="Passes" />
-            <PropertyColumn Property="x => Math.Round(x.AverageFastLaps.Value, 1)" Title="Fast Laps" />
-            <PropertyColumn Property="x => Math.Round(x.AverageLeadLaps.Value, 1)" Title="Lead Laps" />
-            <PropertyColumn Property="x => Math.Round(x.AverageRating.Value, 1)" Title="Rating" />
-        </Columns>
-    </MudDataGrid>
+
+    <div style="padding-top: 5%">
+        <MudPaper Class="pa-16 ma-2" Elevation="3">
+            <MudDataGrid Items="@driverStats" Striped="true" Bordered="true" Hover="true" PageSize="20" Dense="true">
+                <ToolBarContent>
+                    @foreach (var track in trackNames)
+                    {
+                        <MudChip Icon="@Icons.Material.Filled.Stadium" IconColor="Color.Success">@track</MudChip>
+                    }
+                    @foreach (var raceSeason in raceSeasons)
+                    {
+                        <MudChip Icon="@Icons.Material.Filled.SportsScore" IconColor="Color.Success">@raceSeason</MudChip>
+                    }
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
+                    <PropertyColumn Property="x => Math.Round(x.AverageStartPosition.Value, 1)" Title="Start" />
+                    <PropertyColumn Property="x => Math.Round(x.AveragePosition.Value, 1)" Title="Average Position" />
+                    <PropertyColumn Property="x => Math.Round(x.AverageEndPosition.Value, 1)" Title="Finish" />
+                    <PropertyColumn Property="x => Math.Round(x.AveragePasses.Value, 1)" Title="Passes" />
+                    <PropertyColumn Property="x => x.WinFinishes.Value" Title="Wins" />
+                    <PropertyColumn Property="x => x.Top3Finishes.Value" Title="Top 3" />
+                    <PropertyColumn Property="x => x.Top5Finishes.Value" Title="Top 5" />
+                    <PropertyColumn Property="x => x.Top10Finishes.Value" Title="Top 10" />
+                    <PropertyColumn Property="x => x.Top20Finishes.Value" Title="Top 20" />
+                    <PropertyColumn Property="x => Math.Round(x.AverageFastLaps.Value, 1)" Title="Fast Laps" />
+                    <PropertyColumn Property="x => Math.Round(x.AverageLeadLaps.Value, 1)" Title="Lead Laps" />
+                    <PropertyColumn Property="x => Math.Round(x.AverageRating.Value, 1)" Title="Rating" />
+                    <PropertyColumn Property="x => x.SampleSize.Value" Title="Sample Size" />
+
+                </Columns>
+            </MudDataGrid>
+        </MudPaper>
+        
+    </div>
+    
 
 
 }

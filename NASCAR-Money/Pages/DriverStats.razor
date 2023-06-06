@@ -16,7 +16,12 @@ else
 {
     <MudForm @ref="form" OnValidSubmit="GetStats">
 
-    <MudNumericField @bind-Value="seriesId" Label="Series ID"></MudNumericField>
+        <MudSelect Label="Series" @bind-Value="seriesId">
+            <MudSelectItem Value="1">Cup Series</MudSelectItem>
+            <MudSelectItem Value="2">Xfinity Series</MudSelectItem>
+            <MudSelectItem Value="3">Truck Series</MudSelectItem>
+        </MudSelect>
+
 
     <MudSelect Label="Race Seasons" MultiSelection="true" @bind-SelectedValues="SelectedRaceSeasons">
         <MudSelectItem Value="2018">2018</MudSelectItem>
@@ -28,11 +33,19 @@ else
     </MudSelect>
 
     <MudSelect T="string" Label="Track Names" MultiSelection="true" @bind-SelectedValues="SelectedTrackNames">
-        @foreach (var track in tracks)
-        {
-            <MudSelectItem Value="@track">@track</MudSelectItem>
-        }
-    </MudSelect>
+    @foreach (var trackTypeGroup in trackList.GroupBy(t => t.TrackType))
+    {
+        <MudSelectGroup Label="@trackTypeGroup.Key">
+            @foreach (var track in trackTypeGroup)
+            {
+                <MudSelectItem Value="@track.TrackName">@track.TrackName</MudSelectItem>
+            }
+        </MudSelectGroup>
+    }
+</MudSelect>
+
+
+
 
         @foreach (var track in SelectedTrackNames)
         {
@@ -51,8 +64,9 @@ else
 @code {
     MudForm form;
     string? driverFullName;
-    int? seriesId;
-    List<string>? tracks;
+    int seriesId;
+    List<string> tracks;
+    List<Track> trackList;
     List<DriverAverageStats>? driverStats;
     IEnumerable<int>? SelectedRaceSeasons = new List<int>();
     IEnumerable<string>? SelectedTrackNames = new List<string>();
@@ -60,7 +74,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var trackList = await TrackService.GetTracks();
+        trackList = await TrackService.GetTracks();
         tracks = trackList.Select(t => t.TrackName).ToList();
         foreach (var track in tracks)
         {
