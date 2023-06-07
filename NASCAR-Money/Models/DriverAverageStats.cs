@@ -22,8 +22,14 @@
 
     public class RaceResultStat
     {
-        public int Year { get; set; }
+        public int? RaceSeason { get; set; }
         public string TrackName { get; set; }
-        public int FinishPosition { get; set; }
+        public int? StartPosition { get; set; }
+        public float? AveragePosition { get; set; }
+        public int? EndPosition { get; set; }
+        public int? FastLaps { get; set; }
+        public int? LeadLaps { get; set; }
+        public float? Rating { get; set; }
+
     }
 }

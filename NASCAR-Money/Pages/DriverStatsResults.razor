@@ -13,12 +13,12 @@
 else
 {
     <MudPaper Class="pa-4" Elevation="3">
-        <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels"></MudChart>
+        <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
     </MudPaper>
 
     <div style="padding-top: 5%">
         <MudPaper Elevation="3">
-            <MudDataGrid Items="@driverStats" Striped="true" Bordered="true" Hover="true" PageSize="20" EditMode="@DataGridEditMode.Cell">
+            <MudDataGrid Items="@driverStats" Dense="true" Striped="true" Bordered="true" Hover="true" PageSize="20" EditMode="@DataGridEditMode.Cell">
                 <ToolBarContent>
                     @foreach (var track in trackNames)
                     {
@@ -48,18 +48,19 @@ else
                     <PropertyColumn Property="x => x.SampleSize.Value" Title="Sample Size" />
                 </Columns>
                 <ChildRowContent>
-                            <MudDataGrid Items="@context.Item.RaceResults" ReadOnly="true" Hover="true">
+                    <MudDataGrid Dense="true" Items="@context.Item.RaceResults" ReadOnly="true" Hover="true">
                                 <Columns>
                                     <PropertyColumn Property="x => x.TrackName" Title="Track Name" />
-                                    <PropertyColumn Property="x => x.Year" Title="Year" />
-                                    <PropertyColumn Property="x => x.FinishPosition" Title="Finish Position" />
+                                    <PropertyColumn Property="x => x.RaceSeason" Title="Year" />
+                                    <PropertyColumn Property="x => x.StartPosition" Title="Start" />
+                                    <PropertyColumn Property="x => x.AveragePosition" Title="Avg Position" />
+                                    <PropertyColumn Property="x => x.EndPosition" Title="Finish" />
+                                    <PropertyColumn Property="x => x.FastLaps" Title="Fast Laps" />
+                                    <PropertyColumn Property="x => x.LeadLaps" Title="Lead Laps" />
+                                    <PropertyColumn Property="x => x.Rating" Title="Rating" />
                                 </Columns>
                             </MudDataGrid>
                 </ChildRowContent>
-
-                <PagerContent>
-                    <MudDataGridPager T="@RaceResultStat" />
-                </PagerContent>
             </MudDataGrid>
         </MudPaper>
         

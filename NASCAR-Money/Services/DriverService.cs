@@ -100,9 +100,14 @@ namespace NASCAR_Money.Services
                     .Where(r => raceSeasons.Contains(r.RaceSeason.Value) && trackNames.Contains(r.TrackName))
                     .Select(r => new RaceResultStat
                     {
-                        Year = r.RaceSeason.Value,
+                        RaceSeason = r.RaceSeason,
                         TrackName = r.TrackName,
-                        FinishPosition = (int)r.EndPosition
+                        StartPosition = r.StartPosition,
+                        AveragePosition = r.AveragePosition,
+                        EndPosition = r.EndPosition,
+                        FastLaps = r.FastLaps,
+                        LeadLaps = r.LeadLaps,
+                        Rating = r.Rating
                     }).ToList()
 
                 };
