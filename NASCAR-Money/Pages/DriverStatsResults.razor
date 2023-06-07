@@ -18,7 +18,7 @@ else
 
     <div style="padding-top: 5%">
         <MudPaper Elevation="3">
-            <MudDataGrid Items="@driverStats" Striped="true" Bordered="true" Hover="true" PageSize="20" Dense="true">
+            <MudDataGrid Items="@driverStats" Striped="true" Bordered="true" Hover="true" PageSize="20" EditMode="@DataGridEditMode.Cell">
                 <ToolBarContent>
                     @foreach (var track in trackNames)
                     {
@@ -31,6 +31,7 @@ else
                     
                 </ToolBarContent>
                 <Columns>
+                    <HierarchyColumn T="@DriverAverageStats"/>
                     <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
                     <PropertyColumn Property="x => Math.Round(x.AverageStartPosition.Value, 1)" Title="Start" />
                     <PropertyColumn Property="x => Math.Round(x.AveragePosition.Value, 1)" Title="Average Position" />
@@ -46,7 +47,19 @@ else
                     <PropertyColumn Property="x => Math.Round(x.AverageRating.Value, 1)" Title="Rating" />
                     <PropertyColumn Property="x => x.SampleSize.Value" Title="Sample Size" />
                 </Columns>
-                
+                <ChildRowContent>
+                            <MudDataGrid Items="@context.Item.RaceResults" ReadOnly="true" Hover="true">
+                                <Columns>
+                                    <PropertyColumn Property="x => x.TrackName" Title="Track Name" />
+                                    <PropertyColumn Property="x => x.Year" Title="Year" />
+                                    <PropertyColumn Property="x => x.FinishPosition" Title="Finish Position" />
+                                </Columns>
+                            </MudDataGrid>
+                </ChildRowContent>
+
+                <PagerContent>
+                    <MudDataGridPager T="@RaceResultStat" />
+                </PagerContent>
             </MudDataGrid>
         </MudPaper>
         
