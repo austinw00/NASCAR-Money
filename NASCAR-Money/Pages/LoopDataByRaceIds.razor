@@ -1,0 +1,67 @@
+﻿@page "/loopdatabyraceIds"
+@inject NavigationManager NavigationManager
+@inject NASCAR_Money.Services.IDriverService DriverService
+@using NASCAR_Money.Models;
+@using NASCAR_Money.DbModels;
+
+<h3>Loop Data</h3>
+
+@if (loopDatas == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    @foreach(var race in loopDatas)
+    {
+        <div style="padding-top: 5%">
+        <MudPaper Class="pa-16 ma-2" Elevation="3">
+            <MudDataGrid Items="@loopDatas" Striped="true" Bordered="true" Hover="true" PageSize="20" Dense="true">
+                <ToolBarContent>
+                    @race.RaceName | @race.TrackName | @race.RaceSeason
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
+                    <PropertyColumn Property="x => x.StartPosition" Title="Start" />
+                    <PropertyColumn Property="x => x.MidPosition" Title="Mid Race" />
+                    <PropertyColumn Property="x => x.AveragePosition" Title="Average Position" />
+                    <PropertyColumn Property="x => x.EndPosition" Title="Finish" />
+                    <PropertyColumn Property="x => x.Top15Laps" Title="Top 15 Laps" />
+                    <PropertyColumn Property="x => x.BestPosition" Title="Best Position" />
+                    <PropertyColumn Property="x => x.Passes" Title="Passes" />
+                    <PropertyColumn Property="x => x.LeadLaps" Title="Lead Laps" />
+                    <PropertyColumn Property="x => x.FastLaps" Title="Fast Laps" />
+                    <PropertyColumn Property="x => x.Rating" Title="Rating" />
+                </Columns>
+
+            </MudDataGrid>
+        </MudPaper>
+
+        </div>
+    }
+    
+
+
+}
+
+@code {
+    private List<int> raceIds = new List<int>();
+    private List<DriverResult>? loopDatas;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+
+        // Parse the query string
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        // Retrieve the parameters
+        raceIds = query["raceIds"]?.Split(',').Select(int.Parse).ToList() ?? new List<int>();
+
+        // Now fetch the stats using these parameters
+        loopDatas = await DriverService.GetLoopDataByRaceId(raceIds);
+    }
+
+}

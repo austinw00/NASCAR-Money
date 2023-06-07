@@ -16,6 +16,14 @@
         public int? Top10Finishes { get; set; }
         public int? Top20Finishes { get; set; }
         public int? SampleSize { get; set; }
+        public List<RaceResultStat> RaceResults { get; set; }
 
+    }
+
+    public class RaceResultStat
+    {
+        public int Year { get; set; }
+        public string TrackName { get; set; }
+        public int FinishPosition { get; set; }
     }
 }

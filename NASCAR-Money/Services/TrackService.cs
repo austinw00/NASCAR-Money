@@ -15,5 +15,10 @@ namespace NASCAR_Money.Services
         {
             return _context.Tracks.ToList();
         }
+
+        public async Task<List<Race>> GetRaces()
+        {
+            return _context.Races.ToList();
+        }
     }
 }

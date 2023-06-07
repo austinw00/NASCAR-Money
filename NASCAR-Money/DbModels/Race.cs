@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NASCAR_Money.DbModels;
+﻿namespace NASCAR_Money.DbModels;
 
 public partial class Race
 {
-    public int? RaceId { get; set; }
+    public int RaceId { get; set; }
 
     public int? SeriesId { get; set; }
 

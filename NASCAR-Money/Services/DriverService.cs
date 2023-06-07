@@ -13,6 +13,27 @@ namespace NASCAR_Money.Services
             _context = context;
         }
 
+        public async Task<List<DriverResult>> GetLoopDataByRaceId(List<int> raceIds)
+        {
+            // Just fetch the data, do not do the GroupBy yet
+            List<DriverResult> driverResults = new List<DriverResult>();
+
+            if (raceIds != null && raceIds.Any())
+                driverResults = await _context.DriverResults.Where(x => raceIds.Contains(x.RaceId)).ToListAsync();
+
+            // Group the data in memory
+            var results = driverResults
+                .GroupBy(x => new { x.RaceName })
+                .SelectMany(g => g)
+                .ToList();
+
+            return results;
+        }
+
+
+
+
+
         public async Task<List<DriverResult>> DriverPage(int driverId)
         {
             return _context.DriverResults
@@ -52,12 +73,14 @@ namespace NASCAR_Money.Services
                         LeadLaps = r.LeadLaps,
                         Passes = r.Passes,
                         TrackName = r.TrackName,
+                        RaceSeason = r.RaceSeason
                     }).ToList()
                 })
                 .ToListAsync();
 
-            var finalResults = results
-                .Select(g => new DriverAverageStats
+            var finalResults = results.Select(g =>
+            {
+                var driverAverageStats = new DriverAverageStats
                 {
                     DriverFullName = g.DriverFullName,
                     AverageStartPosition = g.Results.Average(x => x.StartPosition / (trackWeights != null && trackWeights.ContainsKey(x.TrackName) ? trackWeights[x.TrackName] : 1)),
@@ -72,12 +95,27 @@ namespace NASCAR_Money.Services
                     Top5Finishes = g.Results.Count(x => x.EndPosition <= 5),
                     Top10Finishes = g.Results.Count(x => x.EndPosition <= 10),
                     Top20Finishes = g.Results.Count(x => x.EndPosition <= 20),
-                    SampleSize = g.Results.Count
-                })
-                .ToList();
+                    SampleSize = g.Results.Count,
+                    RaceResults = g.Results
+                    .Where(r => raceSeasons.Contains(r.RaceSeason.Value) && trackNames.Contains(r.TrackName))
+                    .Select(r => new RaceResultStat
+                    {
+                        Year = r.RaceSeason.Value,
+                        TrackName = r.TrackName,
+                        FinishPosition = (int)r.EndPosition
+                    }).ToList()
+
+                };
+
+                // Add new properties
+
+
+                return driverAverageStats;
+            }).ToList();
 
             return finalResults;
         }
+
 
 
     }

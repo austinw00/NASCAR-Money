@@ -8,7 +8,7 @@
 @using NASCAR_Money.Models;
 @using NASCAR_Money.DbModels;
 
-@if (tracks == null)
+@if (tracks == null && raceList == null)
 {
     <h1>loading</h1>
 }
@@ -43,10 +43,6 @@ else
         </MudSelectGroup>
     }
 </MudSelect>
-
-
-
-
         @foreach (var track in SelectedTrackNames)
         {
             <div>
@@ -58,24 +54,44 @@ else
 
     <MudButton OnClick="(() => GetStats())">Get Stats</MudButton>
 </MudForm>
+
+
+<MudForm @ref="form2" OnValidSubmit="GetLoopData">
+        <MudSelect T="int" Label="Races" MultiSelection="true" @bind-SelectedValues="SelectedRaceIds">
+            @foreach(var race in raceList)
+            {
+                <MudSelectItem Value="@race.RaceId">@race.RaceName | @race.RaceSeason | @race.TrackName</MudSelectItem>
+            }
+        </MudSelect>
+        <MudButton OnClick="(() => GetLoopData())">Get Loop Data</MudButton>
+    </MudForm>
 }
+
+    
+
+
 
 
 @code {
     MudForm form;
+    MudForm form2;
+
     string? driverFullName;
     int seriesId;
     List<string> tracks;
     List<Track> trackList;
+    List<Race> raceList;
     List<DriverAverageStats>? driverStats;
     IEnumerable<int>? SelectedRaceSeasons = new List<int>();
     IEnumerable<string>? SelectedTrackNames = new List<string>();
+    IEnumerable<int>? SelectedRaceIds = new List<int>();
     Dictionary<string, double> trackWeights = new Dictionary<string, double>();
 
     protected override async Task OnInitializedAsync()
     {
         trackList = await TrackService.GetTracks();
         tracks = trackList.Select(t => t.TrackName).ToList();
+        raceList = await TrackService.GetRaces();
         foreach (var track in tracks)
         {
             trackWeights[track] = 1.0; // default weight
@@ -95,5 +111,18 @@ else
 
         NavigationManager.NavigateTo($"/driverstatsresults{queryString}", true);
     }
+
+    private void GetLoopData()
+    {
+        var queryString = new System.UriBuilder
+            {
+                Query = $"raceIds={string.Join(',', SelectedRaceIds)}"
+            }.Uri.Query;
+
+        NavigationManager.NavigateTo($"/loopdatabyraceids{queryString}", true);
+    }
+
+    
+
 
 }

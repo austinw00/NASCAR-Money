@@ -17,17 +17,18 @@ else
     </MudPaper>
 
     <div style="padding-top: 5%">
-        <MudPaper Class="pa-16 ma-2" Elevation="3">
+        <MudPaper Elevation="3">
             <MudDataGrid Items="@driverStats" Striped="true" Bordered="true" Hover="true" PageSize="20" Dense="true">
                 <ToolBarContent>
                     @foreach (var track in trackNames)
                     {
-                        <MudChip Icon="@Icons.Material.Filled.Stadium" IconColor="Color.Success">@track</MudChip>
+                        <MudChip Icon="@Icons.Material.Filled.Stadium" IconColor="Color.Primary">@track</MudChip>
                     }
-                    @foreach (var raceSeason in raceSeasons)
-                    {
-                        <MudChip Icon="@Icons.Material.Filled.SportsScore" IconColor="Color.Success">@raceSeason</MudChip>
-                    }
+                        @foreach (var raceSeason in raceSeasons)
+                        {
+                            <MudChip Icon="@Icons.Material.Filled.SportsScore" IconColor="Color.Success">@raceSeason</MudChip>
+                        }
+                    
                 </ToolBarContent>
                 <Columns>
                     <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
@@ -44,13 +45,12 @@ else
                     <PropertyColumn Property="x => Math.Round(x.AverageLeadLaps.Value, 1)" Title="Lead Laps" />
                     <PropertyColumn Property="x => Math.Round(x.AverageRating.Value, 1)" Title="Rating" />
                     <PropertyColumn Property="x => x.SampleSize.Value" Title="Sample Size" />
-
                 </Columns>
+                
             </MudDataGrid>
         </MudPaper>
         
     </div>
-    
 
 
 }
@@ -65,6 +65,7 @@ else
     private List<string> trackNames = new List<string>();
     private List<DriverAverageStats>? driverStats;
 
+    
 
     protected override async Task OnInitializedAsync()
     {

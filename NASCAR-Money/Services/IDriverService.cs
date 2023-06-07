@@ -11,5 +11,6 @@ namespace NASCAR_Money.Services
         int? seriesId = null,
         List<string> trackNames = null,
         Dictionary<string, double> trackWeights = null);
+        Task<List<DriverResult>> GetLoopDataByRaceId(List<int> raceIds);
     }
 }
