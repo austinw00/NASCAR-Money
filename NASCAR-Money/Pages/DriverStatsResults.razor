@@ -1,20 +1,97 @@
 ﻿@page "/driverstatsresults"
 @inject NavigationManager NavigationManager
 @inject NASCAR_Money.Services.IDriverService DriverService
+@inject NASCAR_Money.Helpers.IDriversHelper DriverHelper
 @using NASCAR_Money.Models;
 @using NASCAR_Money.DbModels;
 
-<h3>Driver Average Stats</h3>
-
-@if (driverStats == null)
+@if (driverStats == null && driverWithHighestAvgRating == null && driverWithHighestAvgStart == null && driverWithHighestAvgPosition == null && driverWithHighestAvgFinish == null)
 {
     <p>Loading...</p>
 }
 else
 {
-    <MudPaper Class="pa-4" Elevation="3">
-        <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
-    </MudPaper>
+    <MudGrid>
+        <MudItem xs="12">
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8"><h1>Driver Average Stats</h1></MudPaper>
+        </MudItem>
+        <MudItem xs="6">
+                <MudPaper Class="pa-4" Elevation="3">
+                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
+                </MudPaper>
+        </MudItem>
+        <MudItem xs="6">
+                <MudPaper Class="pa-4" Elevation="3">
+                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
+                </MudPaper>
+        </MudItem>
+        <MudItem xs="3">
+            <MudCard>
+                <MudCardHeader>
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgStart.Firesuit_Image" Height="300" />
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgStart.Manufacturer" Height="120" />
+
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">Highest Average Start</MudText>
+                    <MudText Typo="Typo.body2">@driverWithHighestAvgStart.Full_Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary">Driver Info</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="3">
+            <MudCard>
+                <MudCardHeader>
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgPosition.Firesuit_Image" Height="300" />
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgPosition.Manufacturer" Height="120" />
+
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">Highest Average Running Position</MudText>
+                    <MudText Typo="Typo.body2">@driverWithHighestAvgPosition.Full_Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary">Driver Info</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="3">
+            <MudCard>
+                <MudCardHeader>
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgFinish.Firesuit_Image" Height="300" />
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgFinish.Manufacturer" Height="120" />
+
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">Highest Average Finish</MudText>
+                    <MudText Typo="Typo.body2">@driverWithHighestAvgFinish.Full_Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary">Driver Info</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="3">
+            <MudCard>
+                <MudCardHeader>
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgRating.Firesuit_Image" Height="300" />
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgRating.Manufacturer" Height="120" />
+
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">Highest Average Rating</MudText>
+                    <MudText Typo="Typo.body2">@driverWithHighestAvgRating.Full_Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary">Driver Info</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+    
+    
 
     <div style="padding-top: 5%">
         <MudPaper Elevation="3">
@@ -78,8 +155,14 @@ else
     private List<int> raceSeasons = new List<int>();
     private List<string> trackNames = new List<string>();
     private List<DriverAverageStats>? driverStats;
+    private DriverData driverWithHighestAvgRating { get; set; }
+    private DriverData driverWithHighestAvgFinish { get; set; }
+    private DriverData driverWithHighestAvgPosition { get; set; }
+    private DriverData driverWithHighestAvgStart { get; set; }
 
-    
+
+    private List<Models.DriverData> driversList;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -110,6 +193,20 @@ else
 
         // Now fetch the stats using these parameters
         driverStats = await DriverService.GetDriverAverageStats(raceSeasons, seriesId, trackNames, trackWeights);
+
+        driversList = await DriverHelper.GetDriversList();
+
+        var highestAvgDriverRating = driverStats.OrderByDescending(x => x.AverageRating).FirstOrDefault();
+        driverWithHighestAvgRating = driversList.Where(x => x.Full_Name == highestAvgDriverRating.DriverFullName).FirstOrDefault();
+
+        var highestAvgDriverStart = driverStats.OrderBy(x => x.AverageStartPosition).FirstOrDefault();
+        driverWithHighestAvgStart = driversList.Where(x => x.Full_Name == highestAvgDriverStart.DriverFullName).FirstOrDefault();
+
+        var highestAvgDriverPosition = driverStats.OrderBy(x => x.AveragePosition).FirstOrDefault();
+        driverWithHighestAvgPosition = driversList.Where(x => x.Full_Name == highestAvgDriverPosition.DriverFullName).FirstOrDefault();
+
+        var highestAvgDriverFinish = driverStats.OrderBy(x => x.AverageEndPosition).FirstOrDefault();
+        driverWithHighestAvgFinish = driversList.Where(x => x.Full_Name == highestAvgDriverFinish.DriverFullName).FirstOrDefault();
     }
 
 }
