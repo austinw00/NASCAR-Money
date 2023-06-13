@@ -4,22 +4,20 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
 
 <p>
     The upcoming cup event id: @upcomingCupEventId
     The upcoming cup event id: @previousCupEventId
 
 </p>
-@if (upcomingCupEventId == null)
+@if (upcomingCupEventId == 0 || upcomingCupEventId == null)
 {
    <h1>loading</h1>
 }
 else
 {
-    <NASCAR_Money.Pages.Components.RaceWeekend year="2023" seriesId="1" eventId="5289"> </NASCAR_Money.Pages.Components.RaceWeekend>
+    <NASCAR_Money.Pages.Components.RaceWeekend year="2023" seriesId="1" eventId="@upcomingCupEventId"> </NASCAR_Money.Pages.Components.RaceWeekend>
 }
 
 
@@ -29,7 +27,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        upcomingCupEventId = await EventIdHelper.GetPreviousCupEventId(DateTime.Now);
-        previousCupEventId = await EventIdHelper.GetUpcomingCupEventId(DateTime.Now);
+        previousCupEventId  = await EventIdHelper.GetPreviousCupEventId(DateTime.Now);
+        upcomingCupEventId = await EventIdHelper.GetUpcomingCupEventId(DateTime.Now);
     }
 }

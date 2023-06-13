@@ -11,25 +11,53 @@
 }
 else
 {
-    <MudGrid>
+    <MudGrid Spacing="7">
         <MudItem xs="12">
-            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8"><h1>Driver Average Stats</h1></MudPaper>
+            <MudPaper Class="d-flex align-center justify-center mud-width-full py-8"><h1>Money Dashboard</h1></MudPaper>
         </MudItem>
-        <MudItem xs="6">
+        <MudItem xs="4">
                 <MudPaper Class="pa-4" Elevation="3">
                     <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
                 </MudPaper>
         </MudItem>
-        <MudItem xs="6">
-                <MudPaper Class="pa-4" Elevation="3">
-                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
-                </MudPaper>
+        <MudItem xs="4">
+           @* <MudPaper Class="pa-4" Elevation="3">
+               <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
+          </MudPaper>*@
         </MudItem>
+        <MudItem xs="4">
+    <MudPaper Width="300px">
+        <MudList>
+                    <MudText Typo="Typo.h6" Class="px-4">NASCAR Odds</MudText>
+            <MudListItem>
+                        <MudNavLink Href="https://sportsbook.draftkings.com/leagues/motorsports/nascar-cup-series" Target="_blank">
+                    DraftKings
+                </MudNavLink>
+            </MudListItem>
+            <MudListItem>
+                        <MudNavLink Href="https://www.barstoolsportsbook.com/sports/motorsports/nascar" Target="_blank">
+                    Barstool
+                </MudNavLink>
+            </MudListItem>
+            <MudListItem>
+                        <MudNavLink Href="https://sportsbook.fanduel.com/motorsport" Target="_blank">
+                    Fanduel
+                </MudNavLink>
+            </MudListItem>
+            <MudListItem>
+                        <MudNavLink Href="https://www.bovada.lv/sports/motor-sports" Target="_blank">
+                    Bovada
+                </MudNavLink>
+            </MudListItem>
+        </MudList>
+    </MudPaper>
+</MudItem>
+
         <MudItem xs="3">
             <MudCard>
-                <MudCardHeader>
-                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgStart.Firesuit_Image" Height="300" />
-                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgStart.Badge_Image" Height="120" />
+                <MudCardHeader Class="center-images">
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgStart.Firesuit_Image" Height="150" />
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgStart.Badge_Image" Height="150" />
 
                 </MudCardHeader>
                 <MudCardContent>
@@ -37,15 +65,15 @@ else
                     <MudText Typo="Typo.body2">@driverWithHighestAvgStart.Full_Name</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary">Driver Info</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/driver/{driverWithHighestAvgStart.Driver_ID}/{driverWithHighestAvgStart.Nascar_Driver_ID}")">Driver Info</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
         <MudItem xs="3">
             <MudCard>
-                <MudCardHeader>
-                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgPosition.Firesuit_Image" Height="300" />
-                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgPosition.Badge_Image" Height="120" />
+                <MudCardHeader Class="center-images">
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgPosition.Firesuit_Image" Height="150" />
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgPosition.Badge_Image" Height="150" />
 
                 </MudCardHeader>
                 <MudCardContent>
@@ -53,15 +81,15 @@ else
                     <MudText Typo="Typo.body2">@driverWithHighestAvgPosition.Full_Name</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary">Driver Info</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/driver/{driverWithHighestAvgPosition.Driver_ID}/{driverWithHighestAvgPosition.Nascar_Driver_ID}")">Driver Info</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
         <MudItem xs="3">
             <MudCard>
-                <MudCardHeader>
-                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgFinish.Firesuit_Image" Height="300" />
-                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgFinish.Badge_Image" Height="120" />
+                <MudCardHeader Class="center-images">
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgFinish.Firesuit_Image" Height="150" />
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgFinish.Badge_Image" Height="150" />
 
                 </MudCardHeader>
                 <MudCardContent>
@@ -69,15 +97,15 @@ else
                     <MudText Typo="Typo.body2">@driverWithHighestAvgFinish.Full_Name</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary">Driver Info</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/driver/{driverWithHighestAvgFinish.Driver_ID}/{driverWithHighestAvgFinish.Nascar_Driver_ID}")">Driver Info</MudButton>
                 </MudCardActions>
             </MudCard>
         </MudItem>
         <MudItem xs="3">
             <MudCard>
-                <MudCardHeader>
-                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgRating.Firesuit_Image" Height="300" />
-                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgRating.Badge_Image" Height="120" />
+                <MudCardHeader Class="center-images">
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgRating.Firesuit_Image" Height="150" />
+                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@driverWithHighestAvgRating.Badge_Image" Height="150" />
 
                 </MudCardHeader>
                 <MudCardContent>
@@ -85,15 +113,16 @@ else
                     <MudText Typo="Typo.body2">@driverWithHighestAvgRating.Full_Name</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary">Driver Info</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/driver/{driverWithHighestAvgRating.Driver_ID}/{driverWithHighestAvgRating.Nascar_Driver_ID}")">Driver Info</MudButton>
                 </MudCardActions>
+
             </MudCard>
         </MudItem>
     </MudGrid>
     
     
 
-    <div style="padding-top: 5%">
+    <div style="padding-top: 2%">
         <MudPaper Elevation="3">
             <MudDataGrid Items="@driverStats" Dense="true" Striped="true" Bordered="true" Hover="true" PageSize="20" EditMode="@DataGridEditMode.Cell">
                 <ToolBarContent>
@@ -145,6 +174,13 @@ else
 
 
 }
+<style>
+    .center-images {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
 
 @code {
     private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
@@ -189,7 +225,20 @@ else
         }
 
         labels = trackNames.ToArray();
-        data = trackWeights.Values.Take(labels.Count()).ToArray();
+        labels = trackNames.ToArray();
+
+        // Extract weights where the track name is in labels
+        List<double> datas = new List<double>();
+        foreach (var label in labels)
+        {
+            if (trackWeights.TryGetValue(label, out double weight))
+            {
+                datas.Add(weight);
+            }
+        }
+
+        // Convert list to array if necessary
+        data = datas.ToArray();
 
         // Now fetch the stats using these parameters
         driverStats = await DriverService.GetDriverAverageStats(raceSeasons, seriesId, trackNames, trackWeights);

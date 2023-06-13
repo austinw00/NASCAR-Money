@@ -47,7 +47,7 @@ else
         {
             <div>
                 <label>@($"Weight for {track}")</label>
-                <MudSlider @bind-Value="trackWeights[track]" Min="0" Max="2" Step="0.05" Color="Color.Primary">Value: @trackWeights[track].ToString("F2")</MudSlider>
+                <MudSlider @bind-Value="trackWeights[track]" Min=".25" Max="2" Step="0.05" Color="Color.Primary">Value: @trackWeights[track].ToString("F2")</MudSlider>
             </div>
         }
 
@@ -56,15 +56,7 @@ else
 </MudForm>
 
 
-<MudForm @ref="form2" OnValidSubmit="GetLoopData">
-        <MudSelect T="int" Label="Races" MultiSelection="true" @bind-SelectedValues="SelectedRaceIds">
-            @foreach(var race in raceList)
-            {
-                <MudSelectItem Value="@race.RaceId">@race.RaceName | @race.RaceSeason | @race.TrackName</MudSelectItem>
-            }
-        </MudSelect>
-        <MudButton OnClick="(() => GetLoopData())">Get Loop Data</MudButton>
-    </MudForm>
+
 }
 
     
@@ -91,7 +83,6 @@ else
     {
         trackList = await TrackService.GetTracks();
         tracks = trackList.Select(t => t.TrackName).ToList();
-        raceList = await TrackService.GetRaces();
         foreach (var track in tracks)
         {
             trackWeights[track] = 1.0; // default weight
@@ -111,18 +102,4 @@ else
 
         NavigationManager.NavigateTo($"/driverstatsresults{queryString}", true);
     }
-
-    private void GetLoopData()
-    {
-        var queryString = new System.UriBuilder
-            {
-                Query = $"raceIds={string.Join(',', SelectedRaceIds)}"
-            }.Uri.Query;
-
-        NavigationManager.NavigateTo($"/loopdatabyraceids{queryString}", true);
-    }
-
-    
-
-
 }
