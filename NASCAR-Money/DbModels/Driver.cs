@@ -110,4 +110,6 @@ public partial class Driver
     public string? SillySeasonChange { get; set; }
 
     public string? SillySeasonChangeDescription { get; set; }
+
+    public virtual ICollection<RaceDetail> RaceDetails { get; set; } = new List<RaceDetail>();
 }

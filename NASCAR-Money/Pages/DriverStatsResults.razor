@@ -16,42 +16,42 @@ else
             <MudPaper Class="d-flex align-center justify-center mud-width-full py-8"><h1>Money Dashboard</h1></MudPaper>
         </MudItem>
         <MudItem xs="4">
-                <MudPaper Class="pa-4" Elevation="3">
-                    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
-                </MudPaper>
+            <MudPaper Class="pa-4" Elevation="3">
+                <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
+            </MudPaper>
         </MudItem>
         <MudItem xs="4">
-           @* <MudPaper Class="pa-4" Elevation="3">
-               <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
-          </MudPaper>*@
+            @* <MudPaper Class="pa-4" Elevation="3">
+        <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="Index" InputData="@data" InputLabels="@labels" LegendPosition="Position.Left"></MudChart>
+        </MudPaper>*@
         </MudItem>
         <MudItem xs="4">
-    <MudPaper Width="300px">
-        <MudList>
+            <MudPaper Width="300px">
+                <MudList>
                     <MudText Typo="Typo.h6" Class="px-4">NASCAR Odds</MudText>
-            <MudListItem>
+                    <MudListItem>
                         <MudNavLink Href="https://sportsbook.draftkings.com/leagues/motorsports/nascar-cup-series" Target="_blank">
-                    DraftKings
-                </MudNavLink>
-            </MudListItem>
-            <MudListItem>
+                            DraftKings
+                        </MudNavLink>
+                    </MudListItem>
+                    <MudListItem>
                         <MudNavLink Href="https://www.barstoolsportsbook.com/sports/motorsports/nascar" Target="_blank">
-                    Barstool
-                </MudNavLink>
-            </MudListItem>
-            <MudListItem>
+                            Barstool
+                        </MudNavLink>
+                    </MudListItem>
+                    <MudListItem>
                         <MudNavLink Href="https://sportsbook.fanduel.com/motorsport" Target="_blank">
-                    Fanduel
-                </MudNavLink>
-            </MudListItem>
-            <MudListItem>
+                            Fanduel
+                        </MudNavLink>
+                    </MudListItem>
+                    <MudListItem>
                         <MudNavLink Href="https://www.bovada.lv/sports/motor-sports" Target="_blank">
-                    Bovada
-                </MudNavLink>
-            </MudListItem>
-        </MudList>
-    </MudPaper>
-</MudItem>
+                            Bovada
+                        </MudNavLink>
+                    </MudListItem>
+                </MudList>
+            </MudPaper>
+        </MudItem>
 
         <MudItem xs="3">
             <MudCard>
@@ -119,8 +119,7 @@ else
             </MudCard>
         </MudItem>
     </MudGrid>
-    
-    
+
 
     <div style="padding-top: 2%">
         <MudPaper Elevation="3">
@@ -130,46 +129,85 @@ else
                     {
                         <MudChip Icon="@Icons.Material.Filled.Stadium" IconColor="Color.Primary">@track</MudChip>
                     }
-                        @foreach (var raceSeason in raceSeasons)
-                        {
-                            <MudChip Icon="@Icons.Material.Filled.SportsScore" IconColor="Color.Success">@raceSeason</MudChip>
-                        }
-                    
+                    @foreach (var raceSeason in raceSeasons)
+                    {
+                        <MudChip Icon="@Icons.Material.Filled.SportsScore" IconColor="Color.Success">@raceSeason</MudChip>
+                    }
+
                 </ToolBarContent>
                 <Columns>
-                    <HierarchyColumn T="@DriverAverageStats"/>
+                    <HierarchyColumn T="@DriverAverageStats" />
                     <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
-                    <PropertyColumn Property="x => Math.Round(x.AverageStartPosition.Value, 1)" Title="Start" />
-                    <PropertyColumn Property="x => Math.Round(x.AveragePosition.Value, 1)" Title="Average Position" />
-                    <PropertyColumn Property="x => Math.Round(x.AverageEndPosition.Value, 1)" Title="Finish" />
-                    <PropertyColumn Property="x => Math.Round(x.AveragePasses.Value, 1)" Title="Passes" />
-                    <PropertyColumn Property="x => x.WinFinishes.Value" Title="Wins" />
-                    <PropertyColumn Property="x => x.Top3Finishes.Value" Title="Top 3" />
-                    <PropertyColumn Property="x => x.Top5Finishes.Value" Title="Top 5" />
-                    <PropertyColumn Property="x => x.Top10Finishes.Value" Title="Top 10" />
-                    <PropertyColumn Property="x => x.Top20Finishes.Value" Title="Top 20" />
-                    <PropertyColumn Property="x => Math.Round(x.AverageFastLaps.Value, 1)" Title="Fast Laps" />
-                    <PropertyColumn Property="x => Math.Round(x.AverageLeadLaps.Value, 1)" Title="Lead Laps" />
-                    <PropertyColumn Property="x => Math.Round(x.AverageRating.Value, 1)" Title="Rating" />
-                    <PropertyColumn Property="x => x.SampleSize.Value" Title="Sample Size" />
+                    <PropertyColumn Property="x => Math.Round(x.AverageStartPosition, 1)"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.AverageStartPosition, minAvgStart, maxAvgStart, true)"
+                                Title="Start" />
+                    <PropertyColumn Property="x => Math.Round(x.AveragePosition, 1)"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.AveragePosition, minAvgPosition, maxAvgPosition, true)"
+                                Title="Average Position" />
+                    <PropertyColumn Property="x => Math.Round(x.AverageEndPosition, 1)"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.AverageEndPosition, minAvgFinish, maxAvgFinish, true)"
+                                Title="Finish" />
+                    <PropertyColumn Property="x => Math.Round(x.AveragePasses, 1)"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.AveragePasses, minAvgPasses, maxAvgPasses, false)"
+                                Title="Passes" />
+
+                    <PropertyColumn Property="x => x.WinFinishes"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.WinFinishes, minWinFinishes, maxWinFinishes, false)"
+                                Title="Wins" />
+
+                    <PropertyColumn Property="x => x.Top3Finishes"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.Top3Finishes, minTop3Finishes, maxTop3Finishes, false)"
+                                Title="Top 3" />
+
+                    <PropertyColumn Property="x => x.Top5Finishes"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.Top5Finishes, minTop5Finishes, maxTop5Finishes, false)"
+                                Title="Top 5" />
+
+                    <PropertyColumn Property="x => x.Top10Finishes"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.Top10Finishes, minTop10Finishes, maxTop10Finishes, false)"
+                                Title="Top 10" />
+
+                    <PropertyColumn Property="x => x.Top20Finishes"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.Top20Finishes, minTop20Finishes, maxTop20Finishes, false)"
+                                Title="Top 20" />
+
+                    <PropertyColumn Property="x => Math.Round(x.AverageFastLaps, 1)"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.AverageFastLaps, minAverageFastLaps, maxAverageFastLaps, false)"
+                                Title="Fast Laps" />
+
+                    <PropertyColumn Property="x => Math.Round(x.AverageLeadLaps, 1)"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.AverageLeadLaps, minAverageLeadLaps, maxAverageLeadLaps, false)"
+                                Title="Lead Laps" />
+
+                    <PropertyColumn Property="x => Math.Round(x.AverageRating, 1)"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.AverageRating, minAverageRating, maxAverageRating, false)"
+                                Title="Rating" />
+
+                    <PropertyColumn Property="x => x.SampleSize"
+                                CellStyleFunc="@GetCellStyleFunc(v => v.SampleSize, minSampleSize, maxSampleSize, false)"
+                                Title="Sample Size" />
+
                 </Columns>
                 <ChildRowContent>
                     <MudDataGrid Dense="true" Items="@context.Item.RaceResults" ReadOnly="true" Hover="true">
-                                <Columns>
-                                    <PropertyColumn Property="x => x.TrackName" Title="Track Name" />
-                                    <PropertyColumn Property="x => x.RaceSeason" Title="Year" />
-                                    <PropertyColumn Property="x => x.StartPosition" Title="Start" />
-                                    <PropertyColumn Property="x => x.AveragePosition" Title="Avg Position" />
-                                    <PropertyColumn Property="x => x.EndPosition" Title="Finish" />
-                                    <PropertyColumn Property="x => x.FastLaps" Title="Fast Laps" />
-                                    <PropertyColumn Property="x => x.LeadLaps" Title="Lead Laps" />
-                                    <PropertyColumn Property="x => x.Rating" Title="Rating" />
-                                </Columns>
-                            </MudDataGrid>
+                        <Columns>
+                            <PropertyColumn Property="x => x.TrackName" Title="Track Name" />
+                            <PropertyColumn Property="x => x.RaceSeason" Title="Year" />
+                            <PropertyColumn Property="x => x.StartPosition" Title="Start" />
+                            <PropertyColumn Property="x => x.AveragePosition" Title="Avg Position" />
+                            <PropertyColumn Property="x => x.EndPosition" Title="Finish" />
+                            <PropertyColumn Property="x => x.FastLaps" Title="Fast Laps" />
+                            <PropertyColumn Property="x => x.LeadLaps" Title="Lead Laps" />
+                            <PropertyColumn Property="x => x.Rating" Title="Rating" />
+                        </Columns>
+                    </MudDataGrid>
                 </ChildRowContent>
             </MudDataGrid>
         </MudPaper>
-        
+@*        <MudSwitch Checked="@isColorFilterEnabled" Label="Toggle Color Filtering" @onCheckedChanged="(args) => isColorFilterEnabled = args" />
+*@
+        <MudSwitch T="bool" @bind-Checked="@isColorFilterEnabled" Color="@Color.Primary">Toggle Color Filtering</MudSwitch>
+
     </div>
 
 
@@ -195,6 +233,34 @@ else
     private DriverData driverWithHighestAvgFinish { get; set; }
     private DriverData driverWithHighestAvgPosition { get; set; }
     private DriverData driverWithHighestAvgStart { get; set; }
+    double minAvgStart;
+    double maxAvgStart;
+    double maxAvgPosition;
+    double minAvgPosition;
+    double minAvgFinish;
+    double maxAvgFinish;
+    double minAvgPasses;
+    double maxAvgPasses;
+    int minWinFinishes;
+    int maxWinFinishes;
+    int minTop3Finishes;
+    int maxTop3Finishes;
+    int minTop5Finishes;
+    int maxTop5Finishes;
+    int minTop10Finishes;
+    int maxTop10Finishes;
+    int minTop20Finishes;
+    int maxTop20Finishes;
+    double minAverageFastLaps;
+    double maxAverageFastLaps;
+    double minAverageLeadLaps;
+    double maxAverageLeadLaps;
+    double minAverageRating;
+    double maxAverageRating;
+    int minSampleSize;
+    int maxSampleSize;
+    bool isColorFilterEnabled = true; // Toggle state (true by default, can be changed based on your requirements)
+
 
 
     private List<Models.DriverData> driversList;
@@ -256,6 +322,80 @@ else
 
         var highestAvgDriverFinish = driverStats.OrderBy(x => x.AverageEndPosition).FirstOrDefault();
         driverWithHighestAvgFinish = driversList.Where(x => x.Full_Name == highestAvgDriverFinish.DriverFullName).FirstOrDefault();
+
+        minAvgStart = driverStats.Min(e => e.AverageStartPosition);
+        maxAvgStart = driverStats.Max(e => e.AverageStartPosition);
+
+        minAvgPosition = driverStats.Min(e => e.AveragePosition);
+        maxAvgPosition = driverStats.Max(e => e.AveragePosition);
+
+        minAvgFinish = driverStats.Min(e => e.AverageEndPosition);
+        maxAvgFinish = driverStats.Max(e => e.AverageEndPosition);
+
+        minAvgPasses = driverStats.Min(x => x.AveragePasses);
+        maxAvgPasses = driverStats.Max(x => x.AveragePasses);
+
+        minWinFinishes = driverStats.Min(x => x.WinFinishes);
+        maxWinFinishes = driverStats.Max(x => x.WinFinishes);
+
+        minTop3Finishes = driverStats.Min(x => x.Top3Finishes);
+        maxTop3Finishes = driverStats.Max(x => x.Top3Finishes);
+
+        minTop5Finishes = driverStats.Min(x => x.Top5Finishes);
+        maxTop5Finishes = driverStats.Max(x => x.Top5Finishes);
+
+        minTop10Finishes = driverStats.Min(x => x.Top10Finishes);
+        maxTop10Finishes = driverStats.Max(x => x.Top10Finishes);
+
+        minTop20Finishes = driverStats.Min(x => x.Top20Finishes);
+        maxTop20Finishes = driverStats.Max(x => x.Top20Finishes);
+
+        minAverageFastLaps = driverStats.Min(x => x.AverageFastLaps);
+        maxAverageFastLaps = driverStats.Max(x => x.AverageFastLaps);
+
+        minAverageLeadLaps = driverStats.Min(x => x.AverageLeadLaps);
+        maxAverageLeadLaps = driverStats.Max(x => x.AverageLeadLaps);
+
+        minAverageRating = driverStats.Min(x => x.AverageRating);
+        maxAverageRating = driverStats.Max(x => x.AverageRating);
+
+        minSampleSize = driverStats.Min(x => x.SampleSize);
+        maxSampleSize = driverStats.Max(x => x.SampleSize);
+
+
     }
+
+    // Style the cells according to the values.
+    private Func<DriverAverageStats, string> GetCellStyleFunc(
+        Func<DriverAverageStats, double> valueSelector,
+        double minValue,
+        double maxValue,
+        bool isGreenLow) => x =>
+    {
+        string color = GetColor(valueSelector(x), minValue, maxValue, isGreenLow);
+        string style = $"background-color:{color};";
+
+        return style;
+    };
+
+    public string GetColor(double value, double minValue, double maxValue, bool isGreenLow)
+    {
+        double ratio;
+        if (isGreenLow)
+        {
+            ratio = (value - minValue) / (maxValue - minValue);
+        }
+        else
+        {
+            ratio = (maxValue - value) / (maxValue - minValue);
+        }
+
+        var r = (int)(255 * ratio);
+        var g = (int)(255 * (1 - ratio));
+        return $"rgb({r},{g},0)";
+    }
+
+
+
 
 }

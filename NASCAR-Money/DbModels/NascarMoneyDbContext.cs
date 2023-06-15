@@ -23,6 +23,8 @@ public partial class NascarMoneyDbContext : DbContext
 
     public virtual DbSet<Race> Races { get; set; }
 
+    public virtual DbSet<RaceDetail> RaceDetails { get; set; }
+
     public virtual DbSet<RaceResult> RaceResults { get; set; }
 
     public virtual DbSet<Track> Tracks { get; set; }
@@ -43,9 +45,7 @@ public partial class NascarMoneyDbContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("nascar_driver_id");
             entity.Property(e => e.Age).HasColumnName("age");
-            entity.Property(e => e.Badge)
-                .HasColumnType("text")
-                .HasColumnName("badge");
+            entity.Property(e => e.Badge).HasColumnName("badge");
             entity.Property(e => e.BadgeImage)
                 .HasColumnType("text")
                 .HasColumnName("badge_image");
@@ -82,9 +82,7 @@ public partial class NascarMoneyDbContext : DbContext
             entity.Property(e => e.FirstName)
                 .HasColumnType("text")
                 .HasColumnName("first_name");
-            entity.Property(e => e.FullName)
-                .HasColumnType("text")
-                .HasColumnName("full_name");
+            entity.Property(e => e.FullName).HasColumnName("full_name");
             entity.Property(e => e.Hobbies)
                 .HasColumnType("text")
                 .HasColumnName("hobbies");
@@ -234,12 +232,15 @@ public partial class NascarMoneyDbContext : DbContext
 
         modelBuilder.Entity<Race>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("Race");
+            entity.HasKey(e => e.RaceId).HasName("PK__Race__1C8FE2F97148DD81");
 
-            entity.HasIndex(e => new { e.RaceId, e.SeriesId, e.RaceSeason }, "UC_Race").IsUnique();
+            entity.ToTable("Race");
 
+            entity.HasIndex(e => e.RaceId, "UC_Race").IsUnique();
+
+            entity.Property(e => e.RaceId)
+                .ValueGeneratedNever()
+                .HasColumnName("race_id");
             entity.Property(e => e.ActualDistance).HasColumnName("actual_distance");
             entity.Property(e => e.ActualLaps).HasColumnName("actual_laps");
             entity.Property(e => e.Attendance).HasColumnName("attendance");
@@ -276,7 +277,6 @@ public partial class NascarMoneyDbContext : DbContext
             entity.Property(e => e.RaceDate)
                 .IsUnicode(false)
                 .HasColumnName("race_date");
-            entity.Property(e => e.RaceId).HasColumnName("race_id");
             entity.Property(e => e.RaceName)
                 .IsUnicode(false)
                 .HasColumnName("race_name");
@@ -301,6 +301,19 @@ public partial class NascarMoneyDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("tunein_date");
             entity.Property(e => e.WinnerDriverId).HasColumnName("winner_driver_id");
+        });
+
+        modelBuilder.Entity<RaceDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__RaceDeta__3214EC07073E05C7");
+
+            entity.HasOne(d => d.Driver).WithMany(p => p.RaceDetails)
+                .HasForeignKey(d => d.DriverId)
+                .HasConstraintName("FK__RaceDetai__Drive__75A278F5");
+
+            entity.HasOne(d => d.Race).WithMany(p => p.RaceDetails)
+                .HasForeignKey(d => d.RaceId)
+                .HasConstraintName("FK__RaceDetai__RaceI__74AE54BC");
         });
 
         modelBuilder.Entity<RaceResult>(entity =>

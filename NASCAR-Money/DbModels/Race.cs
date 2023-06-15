@@ -1,4 +1,7 @@
-﻿namespace NASCAR_Money.DbModels;
+﻿using System;
+using System.Collections.Generic;
+
+namespace NASCAR_Money.DbModels;
 
 public partial class Race
 {
@@ -83,4 +86,6 @@ public partial class Race
     public int? WinnerDriverId { get; set; }
 
     public string? PoleWinnerLaptime { get; set; }
+
+    public virtual ICollection<RaceDetail> RaceDetails { get; set; } = new List<RaceDetail>();
 }
