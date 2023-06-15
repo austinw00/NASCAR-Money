@@ -2,6 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject NASCAR_Money.Services.IDriverService DriverService
 @inject NASCAR_Money.Helpers.IDriversHelper DriverHelper
+@inject NASCAR_Money.Services.ThemeService ThemeService
 @using NASCAR_Money.Models;
 @using NASCAR_Money.DbModels;
 
@@ -120,7 +121,6 @@ else
         </MudItem>
     </MudGrid>
 
-
     <div style="padding-top: 2%">
         <MudPaper Elevation="3">
             <MudDataGrid Items="@driverStats" Dense="true" Striped="true" Bordered="true" Hover="true" PageSize="20" EditMode="@DataGridEditMode.Cell">
@@ -133,6 +133,8 @@ else
                     {
                         <MudChip Icon="@Icons.Material.Filled.SportsScore" IconColor="Color.Success">@raceSeason</MudChip>
                     }
+                    <MudSpacer />
+                    <MudSwitch @bind-Checked="@colorFilter" Color="Color.Primary">Color Filter</MudSwitch>
 
                 </ToolBarContent>
                 <Columns>
@@ -204,9 +206,6 @@ else
                 </ChildRowContent>
             </MudDataGrid>
         </MudPaper>
-@*        <MudSwitch Checked="@isColorFilterEnabled" Label="Toggle Color Filtering" @onCheckedChanged="(args) => isColorFilterEnabled = args" />
-*@
-        <MudSwitch T="bool" @bind-Checked="@isColorFilterEnabled" Color="@Color.Primary">Toggle Color Filtering</MudSwitch>
 
     </div>
 
@@ -259,8 +258,7 @@ else
     double maxAverageRating;
     int minSampleSize;
     int maxSampleSize;
-    bool isColorFilterEnabled = true; // Toggle state (true by default, can be changed based on your requirements)
-
+    private bool colorFilter;
 
 
     private List<Models.DriverData> driversList;
@@ -373,35 +371,46 @@ else
         bool isGreenLow) => x =>
     {
         string color = GetColor(valueSelector(x), minValue, maxValue, isGreenLow);
-        string style = $"background-color:{color};";
+        string style;
+        if (ThemeService.IsDarkMode)
+        {
+            style = $"background-color:{color}; color: black;";
+        }
+        else
+        {
+            style = $"background-color:{color};";
+        }
+
+        if (colorFilter == true)
+        {
+
+        }
+        else
+        {
+            style = "";
+        }
 
         return style;
     };
 
-    public string GetColor(double value, double minValue, double maxValue)
+    public string GetColor(double value, double minValue, double maxValue, bool isRedLow)
     {
-        double ratio = (value - minValue) / (maxValue - minValue);
-
-        int h, s, l;
-
-        if (ratio < 0.5)
+        double ratio;
+        if (isRedLow)
         {
-            // Transition from green (120) to yellow (60)
-            h = 120 - (int)(120 * ratio * 2); // ratio*2 to scale ratio from 0-0.5 to 0-1
-            s = 100;
-            l = 50;
+            ratio = (value - minValue) / (maxValue - minValue);
         }
         else
         {
-            // Transition from yellow to white
-            h = 60; // yellow hue
-            s = 100 - (int)((ratio - 0.5) * 2 * 100); // scale saturation down from 100 to 0
-            l = 50 + (int)((ratio - 0.5) * 2 * 50); // scale lightness up from 50 to 100
+            ratio = (maxValue - value) / (maxValue - minValue);
         }
+
+        var h = 120 - (int)(120 * ratio); // interpolating hue from 0 (red) to 120 (green)
+        const int s = 100; // saturation is always 100
+        const int l = 50; // lightness is always 50
 
         return $"hsl({h},{s}%,{l}%)";
     }
-
 
 
 

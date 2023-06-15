@@ -17,6 +17,7 @@ builder.Services.AddScoped<IEventIdHelper, EventIdHelper>();
 builder.Services.AddScoped<IDriversHelper, DriversHelper>();
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<ITrackService, TrackService>();
+builder.Services.AddSingleton<ThemeService>();
 builder.Services.AddDbContext<NascarMoneyDbContext>(x => x.UseSqlServer(connectionString));
 
 builder.Services.AddMudServices();
