@@ -1,6 +1,9 @@
 ﻿@page "/racecenter/{year:int}/{seriesId:int}/{raceId:int}"
 
 @inject NASCAR_Money.Services.IRaceCenterService RaceCenterService
+@inject NASCAR_Money.Data.NascarCache.ICacheService CacheService
+@inject NASCAR_Money.Services.IDriverService DriverService
+@inject NASCAR_Money.Services.ThemeService ThemeService
 @inject NavigationManager NavigationManager
 @using NASCAR_Money.Models.ViewModels;
 @using NASCAR_Money.Models;
@@ -40,7 +43,7 @@ else
         </MudPaper>
     </MudItem>
     <MudItem xs="12" sm="8">
-        <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">
+            <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8" Style="padding: 20px;">
                 <MudGrid>
                     <MudItem xs="12" Class="d-flex align-center justify-center">
                         <h2>@raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().race_name | @raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().track_name</h2>
@@ -54,21 +57,62 @@ else
                     <MudItem xs="4" Class="d-flex align-center justify-center">
                         <img src="@raceCenterViewModel.trackInfo.TrackImageThumbnail" style="height:auto; width:200px" />
                     </MudItem>
-                    <MudItem xs="6" Class="d-flex align-center justify-center">
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <div style="max-height: 320px; overflow-y: auto;">
                         <MudList>
-                            <MudListItem Avatar="@Icons.Material.Filled.Image">
-                                @raceCenterViewModel.trackInfo.TrackDescription
+                            <MudListItem Avatar="@Icons.Material.Filled.Category">
+                                @raceCenterViewModel.trackInfo.TrackType
                             </MudListItem>
-                            <MudListItem Avatar="@Icons.Material.Filled.Work">
+                            <MudListItem Avatar="@Icons.Material.Filled.Straighten">
+                                @raceCenterViewModel.trackInfo.Length Miles
+                            </MudListItem>
+                            <MudListItem Avatar="@Icons.Material.Filled.Construction">
                                 @raceCenterViewModel.trackInfo.TrackSurface
                             </MudListItem>
-                            <MudListItem Avatar="@Icons.Material.Filled.Umbrella">
-                                @raceCenterViewModel.trackInfo.YearBuilt
+                            <MudListItem Avatar="@Icons.Material.Filled.SquareFoot">
+                                @raceCenterViewModel.trackInfo.TrackBanking
+                            </MudListItem>
+                            <MudListItem Avatar="@Icons.Material.Filled.Info">
+                                @raceCenterViewModel.trackInfo.TrackDescription
                             </MudListItem>
                         </MudList>
+                        </div>
                     </MudItem>
-                    <MudItem xs="6">
+                    <MudItem xs="4">
+                        @if (raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().date_scheduled > DateTime.UtcNow)
+                        {
+                            <MudCard>
+                            <MudCardHeader Class="center-images">
+                                <MudImage ObjectPosition="ObjectPosition.Top" Src="@raceCenterViewModel.scheduleCombinedFeed.Previous_Winner_Firesuit" Height="180" />
+                                <MudImage ObjectPosition="ObjectPosition.Top" Src="@raceCenterViewModel.scheduleCombinedFeed.Previous_Winner_Badge" Height="110" />
+                            </MudCardHeader>
+                            <MudCardContent>
+                                <MudText Typo="Typo.h5">Previous Winner</MudText>
+                                <MudText Typo="Typo.body2">@raceCenterViewModel.scheduleCombinedFeed.Previous_Winner_Name</MudText>
+                            </MudCardContent>
+                            </MudCard>
+                        }
+                        else
+                        {
+                            <MudCard>
+                                <MudCardHeader Class="center-images">
+                                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@raceCenterViewModel.scheduleCombinedFeed.Current_Winner_Firesuit" Height="180" />
+                                    <MudImage ObjectPosition="ObjectPosition.Top" Src="@raceCenterViewModel.scheduleCombinedFeed.Current_Winner_Badge" Height="110" />
+                                </MudCardHeader>
+                                <MudCardContent>
+                                    <MudText Typo="Typo.h5">Race Winner</MudText>
+                                    <MudText Typo="Typo.body2">@raceCenterViewModel.scheduleCombinedFeed.Current_Winner_Name</MudText>
+                                </MudCardContent>
+                            </MudCard>
+                        }
 
+                    </MudItem>
+                    <MudItem xs="4">
+                        <MudStack>
+                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Delete</MudButton>
+                            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Send</MudButton>
+                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Custom.Uncategorized.Radioactive" Color="Color.Warning">Warning</MudButton>
+                        </MudStack>
                     </MudItem>
                 </MudGrid>
         </MudPaper>
@@ -76,7 +120,7 @@ else
     <MudItem xs="12" sm="4">
                 @if (seriesId == 1)
                 {
-                    <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_1.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" FixedHeader="true" Height="500px">
+                    <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_1.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" Dense="true" FixedHeader="true" Height="500px">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6">Weekend Schedule</MudText>
                         </ToolBarContent>
@@ -88,7 +132,7 @@ else
                 }
                 else if (seriesId == 2)
                 {
-                    <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_2.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" FixedHeader="true" Height="500px">
+                <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_2.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" Dense="true" FixedHeader="true" Height="500px">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6">Weekend Schedule</MudText>
                         </ToolBarContent>
@@ -100,7 +144,7 @@ else
                 }
                 else if (seriesId == 3)
                 {
-                    <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_3.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" FixedHeader="true" Height="500px">
+                <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_3.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" Dense="true" FixedHeader="true" Height="500px">
                         <ToolBarContent>
                             <MudText Typo="Typo.h6">Weekend Schedule</MudText>
                         </ToolBarContent>
@@ -125,7 +169,7 @@ else
         else
         {
             <MudItem xs="12" sm="4">
-            <MudDataGrid Items="@raceCenterViewModel.weekendFeed.weekend_runs.Where(x => x.run_type == 2).SelectMany(x => x.results)" Virtualize="true" FixedHeader="true" Height="500px">
+            <MudDataGrid Items="@raceCenterViewModel.weekendFeed.weekend_runs.Where(x => x.run_type == 2).SelectMany(x => x.results)" Virtualize="true" Striped="true" FixedHeader="true" Height="500px">
                 <ToolBarContent>
                     <MudText Typo="Typo.h6">Qualifying Results</MudText>
                 </ToolBarContent>
@@ -139,7 +183,7 @@ else
         </MudItem>
         }
         
-        @if (raceCenterViewModel.lapAverages == null)
+        @if (lapAverages == null)
         {
             <MudItem xs="12" sm="8">
                 <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">Practice Starts: @practiceTime</MudPaper>
@@ -148,26 +192,117 @@ else
         else
         {
             <MudItem xs="12" sm="8">
-            <MudDataGrid Items="@raceCenterViewModel.lapAverages.Items" Virtualize="true" FixedHeader="true" Height="500px">
+                <MudDataGrid Items="lapAverages.Items" Virtualize="true" FixedHeader="true" Height="500px" Striped="true" Dense="true">
                 <ToolBarContent>
                     <MudText Typo="Typo.h6">Practice Averages</MudText>
                 </ToolBarContent>
                 <Columns>
                     <PropertyColumn Property="x => x.Driver" Title="Driver" />
+                    <PropertyColumn Property="x => Math.Round(x.OverAllAvg, 2)" Title="Overall Avg" />
+                    <PropertyColumn Property="x => x.OverAllAvgRank" Title="Overall Rank" />
                     <PropertyColumn Property="x => x.Con5LapRank" Title="5 lap" />
                     <PropertyColumn Property="x => x.Con10LapRank" Title="10 lap" />
                     <PropertyColumn Property="x => x.Con15LapRank" Title="15 lap" />
+                    <PropertyColumn Property="x => x.Con20LapRank" Title="20 lap" />
+
                 </Columns>
             </MudDataGrid>
             </MudItem>
         }
-        
-    <MudItem xs="12">
-        <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">xs=6 sm=3</MudPaper>
-    </MudItem>
 </MudGrid>
 }
 
+@if(driverStats == null)
+{
+    <h2>Loading Historical Data</h2>
+}
+else
+{
+    <div style="padding-top: 2%">
+    <MudDataGrid Items="@driverStats" Virtualize="true" Height="600px" FixedHeader="true" Dense="true" Striped="true" Bordered="true" Hover="true" PageSize="20" EditMode="@DataGridEditMode.Cell">
+        <ToolBarContent>
+            @foreach (var track in tracks)
+            {
+                <MudChip Icon="@Icons.Material.Filled.Stadium" IconColor="Color.Primary">@track</MudChip>
+            }
+            @foreach (var raceSeason in years)
+            {
+                <MudChip Icon="@Icons.Material.Filled.SportsScore" IconColor="Color.Success">@raceSeason</MudChip>
+            }
+            <MudSpacer />
+            <MudSwitch @bind-Checked="@colorFilter" Color="Color.Primary">Color Filter</MudSwitch>
+
+        </ToolBarContent>
+        <Columns>
+            <HierarchyColumn T="@DriverAverageStats" />
+            <PropertyColumn Property="x => x.DriverFullName" Title="Driver" />
+            <PropertyColumn Property="x => Math.Round(x.AverageStartPosition, 1)"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.AverageStartPosition, minAvgStart, maxAvgStart, true)"
+                        Title="Start" />
+            <PropertyColumn Property="x => Math.Round(x.AveragePosition, 1)"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.AveragePosition, minAvgPosition, maxAvgPosition, true)"
+                        Title="Average Position" />
+            <PropertyColumn Property="x => Math.Round(x.AverageEndPosition, 1)"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.AverageEndPosition, minAvgFinish, maxAvgFinish, true)"
+                        Title="Finish" />
+            @*<PropertyColumn Property="x => Math.Round(x.AveragePasses, 1)"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.AveragePasses, minAvgPasses, maxAvgPasses, false)"
+                        Title="Passes" />*@
+
+            <PropertyColumn Property="x => x.WinFinishes"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.WinFinishes, minWinFinishes, maxWinFinishes, false)"
+                        Title="Wins" />
+
+            @*<PropertyColumn Property="x => x.Top3Finishes"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.Top3Finishes, minTop3Finishes, maxTop3Finishes, false)"
+                        Title="Top 3" />*@
+
+            <PropertyColumn Property="x => x.Top5Finishes"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.Top5Finishes, minTop5Finishes, maxTop5Finishes, false)"
+                        Title="Top 5" />
+
+            <PropertyColumn Property="x => x.Top10Finishes"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.Top10Finishes, minTop10Finishes, maxTop10Finishes, false)"
+                        Title="Top 10" />
+
+            @*<PropertyColumn Property="x => x.Top20Finishes"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.Top20Finishes, minTop20Finishes, maxTop20Finishes, false)"
+                        Title="Top 20" />*@
+
+            <PropertyColumn Property="x => Math.Round(x.AverageFastLaps, 1)"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.AverageFastLaps, minAverageFastLaps, maxAverageFastLaps, false)"
+                        Title="Fast Laps" />
+
+            <PropertyColumn Property="x => Math.Round(x.AverageLeadLaps, 1)"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.AverageLeadLaps, minAverageLeadLaps, maxAverageLeadLaps, false)"
+                        Title="Lead Laps" />
+
+            <PropertyColumn Property="x => Math.Round(x.AverageRating, 1)"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.AverageRating, minAverageRating, maxAverageRating, false)"
+                        Title="Rating" />
+
+            <PropertyColumn Property="x => x.SampleSize"
+                        CellStyleFunc="@GetCellStyleFunc(v => v.SampleSize, minSampleSize, maxSampleSize, false)"
+                        Title="Sample Size" />
+
+        </Columns>
+        <ChildRowContent>
+            <MudDataGrid Dense="true" Items="@context.Item.RaceResults" ReadOnly="true" Hover="true">
+                <Columns>
+                    <PropertyColumn Property="x => x.TrackName" Title="Track Name" />
+                    <PropertyColumn Property="x => x.RaceSeason" Title="Year" />
+                    <PropertyColumn Property="x => x.StartPosition" Title="Start" />
+                    <PropertyColumn Property="x => x.AveragePosition" Title="Avg Position" />
+                    <PropertyColumn Property="x => x.EndPosition" Title="Finish" />
+                    <PropertyColumn Property="x => x.FastLaps" Title="Fast Laps" />
+                    <PropertyColumn Property="x => x.LeadLaps" Title="Lead Laps" />
+                    <PropertyColumn Property="x => x.Rating" Title="Rating" />
+                </Columns>
+            </MudDataGrid>
+        </ChildRowContent>
+    </MudDataGrid>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -177,8 +312,39 @@ else
     [Parameter]
     public int raceId { get; set; }
 
+    LapAverages lapAverages;
+    private List<DriverAverageStats>? driverStats;
     DateTime qualifyingTime;
     DateTime practiceTime;
+    List<string> tracks;
+    List<int> years;
+    double minAvgStart;
+    double maxAvgStart;
+    double maxAvgPosition;
+    double minAvgPosition;
+    double minAvgFinish;
+    double maxAvgFinish;
+    double minAvgPasses;
+    double maxAvgPasses;
+    int minWinFinishes;
+    int maxWinFinishes;
+    int minTop3Finishes;
+    int maxTop3Finishes;
+    int minTop5Finishes;
+    int maxTop5Finishes;
+    int minTop10Finishes;
+    int maxTop10Finishes;
+    int minTop20Finishes;
+    int maxTop20Finishes;
+    double minAverageFastLaps;
+    double maxAverageFastLaps;
+    double minAverageLeadLaps;
+    double maxAverageLeadLaps;
+    double minAverageRating;
+    double maxAverageRating;
+    int minSampleSize;
+    int maxSampleSize;
+    private bool colorFilter;
 
     private RaceCenterViewModel raceCenterViewModel;
 
@@ -187,8 +353,7 @@ else
         try
         {
             raceCenterViewModel = await RaceCenterService.GetRaceCenter(year, seriesId, raceId); //Suggestion - Load one by one, One by one up top too
-            var test = raceCenterViewModel.raceListBasic.series_1.Where(x => x.race_id == raceId).SelectMany(x => x.schedule);
-
+            lapAverages = await CacheService.GetLapAveragesAsync(year, seriesId, raceId);
             if(seriesId == 1)
             {
                 qualifyingTime = raceCenterViewModel.raceListBasic.series_1
@@ -235,6 +400,49 @@ else
                                 .FirstOrDefault();
             }
 
+            years = new List<int> { 2018, 2019, 2020, 2021, 2022, 2023 };
+            tracks = new List<string> { raceCenterViewModel.trackInfo.TrackName };
+
+            driverStats = await DriverService.GetDriverAverageStats(years, seriesId, tracks);
+
+            minAvgStart = driverStats.Min(e => e.AverageStartPosition);
+            maxAvgStart = driverStats.Max(e => e.AverageStartPosition);
+
+            minAvgPosition = driverStats.Min(e => e.AveragePosition);
+            maxAvgPosition = driverStats.Max(e => e.AveragePosition);
+
+            minAvgFinish = driverStats.Min(e => e.AverageEndPosition);
+            maxAvgFinish = driverStats.Max(e => e.AverageEndPosition);
+
+            minAvgPasses = driverStats.Min(x => x.AveragePasses);
+            maxAvgPasses = driverStats.Max(x => x.AveragePasses);
+
+            minWinFinishes = driverStats.Min(x => x.WinFinishes);
+            maxWinFinishes = driverStats.Max(x => x.WinFinishes);
+
+            minTop3Finishes = driverStats.Min(x => x.Top3Finishes);
+            maxTop3Finishes = driverStats.Max(x => x.Top3Finishes);
+
+            minTop5Finishes = driverStats.Min(x => x.Top5Finishes);
+            maxTop5Finishes = driverStats.Max(x => x.Top5Finishes);
+
+            minTop10Finishes = driverStats.Min(x => x.Top10Finishes);
+            maxTop10Finishes = driverStats.Max(x => x.Top10Finishes);
+
+            minTop20Finishes = driverStats.Min(x => x.Top20Finishes);
+            maxTop20Finishes = driverStats.Max(x => x.Top20Finishes);
+
+            minAverageFastLaps = driverStats.Min(x => x.AverageFastLaps);
+            maxAverageFastLaps = driverStats.Max(x => x.AverageFastLaps);
+
+            minAverageLeadLaps = driverStats.Min(x => x.AverageLeadLaps);
+            maxAverageLeadLaps = driverStats.Max(x => x.AverageLeadLaps);
+
+            minAverageRating = driverStats.Min(x => x.AverageRating);
+            maxAverageRating = driverStats.Max(x => x.AverageRating);
+
+            minSampleSize = driverStats.Min(x => x.SampleSize);
+            maxSampleSize = driverStats.Max(x => x.SampleSize);
 
         }
         catch (Exception e)
@@ -260,6 +468,55 @@ else
 
         return style;
     };
+
+    // Style the cells according to the values.
+    private Func<DriverAverageStats, string> GetCellStyleFunc(
+        Func<DriverAverageStats, double> valueSelector,
+        double minValue,
+        double maxValue,
+        bool isGreenLow) => x =>
+    {
+        string color = GetColor(valueSelector(x), minValue, maxValue, isGreenLow);
+        string style;
+        if (ThemeService.IsDarkMode)
+        {
+            style = $"background-color:{color}; color: black;";
+        }
+        else
+        {
+            style = $"background-color:{color};";
+        }
+
+        if (colorFilter == true)
+        {
+
+        }
+        else
+        {
+            style = "";
+        }
+
+        return style;
+    };
+
+    public string GetColor(double value, double minValue, double maxValue, bool isRedLow)
+    {
+        double ratio;
+        if (isRedLow)
+        {
+            ratio = (value - minValue) / (maxValue - minValue);
+        }
+        else
+        {
+            ratio = (maxValue - value) / (maxValue - minValue);
+        }
+
+        var h = 120 - (int)(120 * ratio); // interpolating hue from 0 (red) to 120 (green)
+        const int s = 100; // saturation is always 100
+        const int l = 50; // lightness is always 50
+
+        return $"hsl({h},{s}%,{l}%)";
+    }
 
     
 }
