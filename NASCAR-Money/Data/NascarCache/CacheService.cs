@@ -46,7 +46,7 @@ namespace NASCAR_Money.Data.NascarCache
             if (response.IsSuccessStatusCode)
             {
                 string jsonContent = await response.Content.ReadAsStringAsync();
-                LapAverages lapAverages = JsonConvert.DeserializeObject<LapAverages>(jsonContent);
+                LapAverages lapAverages = JsonConvert.DeserializeObject<List<LapAverages>>(jsonContent).FirstOrDefault();
                 return lapAverages;
             }
 
@@ -122,7 +122,7 @@ namespace NASCAR_Money.Data.NascarCache
 
             return null;
         }
-        
+
 
     }
 }

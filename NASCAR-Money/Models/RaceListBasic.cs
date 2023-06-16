@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace NASCAR_Money.Models
+﻿namespace NASCAR_Money.Models
 {
     public class RaceListBasic
     {
@@ -52,7 +50,7 @@ namespace NASCAR_Money.Models
         public string race_comments { get; set; }
         public int attendance { get; set; }
         public List<object> infractions { get; set; }
-        [JsonProperty("Driver")]
+
         public List<Schedule> schedule { get; set; }
         public string radio_broadcaster { get; set; }
         public string television_broadcaster { get; set; }
@@ -103,7 +101,6 @@ namespace NASCAR_Money.Models
         public string race_comments { get; set; }
         public int attendance { get; set; }
         public List<object> infractions { get; set; }
-        [JsonProperty("Driver")]
         public List<Schedule> schedule { get; set; }
         public string radio_broadcaster { get; set; }
         public string television_broadcaster { get; set; }
@@ -154,7 +151,6 @@ namespace NASCAR_Money.Models
         public string race_comments { get; set; }
         public int attendance { get; set; }
         public List<object> infractions { get; set; }
-        [JsonProperty("Driver")]
         public List<Schedule> schedule { get; set; }
         public string radio_broadcaster { get; set; }
         public string television_broadcaster { get; set; }

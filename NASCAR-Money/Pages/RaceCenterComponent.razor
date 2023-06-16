@@ -1,0 +1,265 @@
+﻿@page "/racecenter/{year:int}/{seriesId:int}/{raceId:int}"
+
+@inject NASCAR_Money.Services.IRaceCenterService RaceCenterService
+@inject NavigationManager NavigationManager
+@using NASCAR_Money.Models.ViewModels;
+@using NASCAR_Money.Models;
+
+
+@if(raceCenterViewModel == null)
+{
+    <h2> loading...</h2>
+}
+else
+{
+    <style>
+    body {
+        background: url("@raceCenterViewModel.scheduleCombinedFeed.Track_Background_Image_URL") no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+</style>
+
+    <MudGrid>
+    <MudItem xs="12">
+        <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">
+            <MudGrid>
+                <MudItem xs="2"></MudItem>
+                <MudItem xs="8" Class="d-flex align-items-center justify-content-center">
+                    <img src="@raceCenterViewModel.scheduleCombinedFeed.Race_Logo_Medium" style="height: 80px; width: auto; padding-right: 2%" />
+                    <div class="text-center">
+                        <h1 style="font-weight:bold">@raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().race_name</h1>
+                            <h6>@raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().date_scheduled.ToString("dddd, MMMM dd, yyyy | hh:mm tt")</h6>
+                        </div>
+                    <img src="@raceCenterViewModel.scheduleCombinedFeed.Series_Logo" style="height: 80px; width: auto; padding-left: 2%" />
+                </MudItem>
+                <MudItem xs="2"></MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="8">
+        <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">
+                <MudGrid>
+                    <MudItem xs="12" Class="d-flex align-center justify-center">
+                        <h2>@raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().race_name | @raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().track_name</h2>
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <img src="@raceCenterViewModel.trackInfo.TrackLogo" style="height:auto; width:200px" />
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <img src="@raceCenterViewModel.scheduleCombinedFeed.Race_Logo_Medium" style="height:auto; width:200px" />
+                    </MudItem>
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <img src="@raceCenterViewModel.trackInfo.TrackImageThumbnail" style="height:auto; width:200px" />
+                    </MudItem>
+                    <MudItem xs="6" Class="d-flex align-center justify-center">
+                        <MudList>
+                            <MudListItem Avatar="@Icons.Material.Filled.Image">
+                                @raceCenterViewModel.trackInfo.TrackDescription
+                            </MudListItem>
+                            <MudListItem Avatar="@Icons.Material.Filled.Work">
+                                @raceCenterViewModel.trackInfo.TrackSurface
+                            </MudListItem>
+                            <MudListItem Avatar="@Icons.Material.Filled.Umbrella">
+                                @raceCenterViewModel.trackInfo.YearBuilt
+                            </MudListItem>
+                        </MudList>
+                    </MudItem>
+                    <MudItem xs="6">
+
+                    </MudItem>
+                </MudGrid>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="4">
+                @if (seriesId == 1)
+                {
+                    <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_1.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" FixedHeader="true" Height="500px">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">Weekend Schedule</MudText>
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Property="x => x.event_name" Title="Event" CellStyleFunc="@_cellStyleFunc" />
+                            <PropertyColumn Property="x => x.start_time_utc" Title="Time" />
+                        </Columns>
+                    </MudDataGrid>
+                }
+                else if (seriesId == 2)
+                {
+                    <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_2.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" FixedHeader="true" Height="500px">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">Weekend Schedule</MudText>
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Property="x => x.event_name" Title="Event" CellStyleFunc="@_cellStyleFunc" />
+                            <PropertyColumn Property="x => x.start_time_utc" Title="Time" />
+                        </Columns>
+                    </MudDataGrid>
+                }
+                else if (seriesId == 3)
+                {
+                    <MudDataGrid Items="@raceCenterViewModel.raceListBasic.series_3.Where(x => x.race_id == raceId).SelectMany(x => x.schedule)" Virtualize="true" FixedHeader="true" Height="500px">
+                        <ToolBarContent>
+                            <MudText Typo="Typo.h6">Weekend Schedule</MudText>
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Property="x => x.event_name" Title="Event" CellStyleFunc="@_cellStyleFunc" />
+                            <PropertyColumn Property="x => x.start_time_utc" Title="Time" />
+                        </Columns>
+                    </MudDataGrid>
+                }
+                
+
+    </MudItem>
+
+        @if (raceCenterViewModel.weekendFeed.weekend_runs.Where(x => x.run_type == 2).SelectMany(x => x.results).Count() < 1 || raceCenterViewModel.weekendFeed.weekend_runs.Where(x => x.run_type == 2).SelectMany(x => x.results).Count() == null)
+        {
+            <MudItem xs="12" sm="4">
+                <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">
+                    Qualifying Starts: @qualifyingTime
+                </MudPaper>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="12" sm="4">
+            <MudDataGrid Items="@raceCenterViewModel.weekendFeed.weekend_runs.Where(x => x.run_type == 2).SelectMany(x => x.results)" Virtualize="true" FixedHeader="true" Height="500px">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Qualifying Results</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="x => x.driver_name" Title="Driver" />
+                    <PropertyColumn Property="x => x.finishing_position" Title="Start"/>
+                    <PropertyColumn Property="x => x.delta_leader" Title="Behind"/>
+                </Columns>
+            </MudDataGrid>
+                
+        </MudItem>
+        }
+        
+        @if (raceCenterViewModel.lapAverages == null)
+        {
+            <MudItem xs="12" sm="8">
+                <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">Practice Starts: @practiceTime</MudPaper>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem xs="12" sm="8">
+            <MudDataGrid Items="@raceCenterViewModel.lapAverages.Items" Virtualize="true" FixedHeader="true" Height="500px">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Practice Averages</MudText>
+                </ToolBarContent>
+                <Columns>
+                    <PropertyColumn Property="x => x.Driver" Title="Driver" />
+                    <PropertyColumn Property="x => x.Con5LapRank" Title="5 lap" />
+                    <PropertyColumn Property="x => x.Con10LapRank" Title="10 lap" />
+                    <PropertyColumn Property="x => x.Con15LapRank" Title="15 lap" />
+                </Columns>
+            </MudDataGrid>
+            </MudItem>
+        }
+        
+    <MudItem xs="12">
+        <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">xs=6 sm=3</MudPaper>
+    </MudItem>
+</MudGrid>
+}
+
+
+@code {
+    [Parameter]
+    public int year { get; set; }
+    [Parameter]
+    public int seriesId { get; set; }
+    [Parameter]
+    public int raceId { get; set; }
+
+    DateTime qualifyingTime;
+    DateTime practiceTime;
+
+    private RaceCenterViewModel raceCenterViewModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            raceCenterViewModel = await RaceCenterService.GetRaceCenter(year, seriesId, raceId); //Suggestion - Load one by one, One by one up top too
+            var test = raceCenterViewModel.raceListBasic.series_1.Where(x => x.race_id == raceId).SelectMany(x => x.schedule);
+
+            if(seriesId == 1)
+            {
+                qualifyingTime = raceCenterViewModel.raceListBasic.series_1
+                                .Where(x => x.race_id == raceId)
+                                .SelectMany(x => x.schedule)
+                                .Where(x => x.run_type == 2)
+                                .Select(x => x.start_time_utc)
+                                .FirstOrDefault();
+                practiceTime = raceCenterViewModel.raceListBasic.series_1
+                                .Where(x => x.race_id == raceId)
+                                .SelectMany(x => x.schedule)
+                                .Where(x => x.run_type == 1)
+                                .Select(x => x.start_time_utc)
+                                .FirstOrDefault();
+            }
+            else if(seriesId == 2)
+            {
+                qualifyingTime = raceCenterViewModel.raceListBasic.series_2
+                                .Where(x => x.race_id == raceId)
+                                .SelectMany(x => x.schedule)
+                                .Where(x => x.run_type == 2)
+                                .Select(x => x.start_time_utc)
+                                .FirstOrDefault();
+                practiceTime = raceCenterViewModel.raceListBasic.series_2
+                                .Where(x => x.race_id == raceId)
+                                .SelectMany(x => x.schedule)
+                                .Where(x => x.run_type == 1)
+                                .Select(x => x.start_time_utc)
+                                .FirstOrDefault();
+            }
+            else
+            {
+                qualifyingTime = raceCenterViewModel.raceListBasic.series_3
+                                .Where(x => x.race_id == raceId)
+                                .SelectMany(x => x.schedule)
+                                .Where(x => x.run_type == 2)
+                                .Select(x => x.start_time_utc)
+                                .FirstOrDefault();
+                practiceTime = raceCenterViewModel.raceListBasic.series_3
+                                .Where(x => x.race_id == raceId)
+                                .SelectMany(x => x.schedule)
+                                .Where(x => x.run_type == 1)
+                                .Select(x => x.start_time_utc)
+                                .FirstOrDefault();
+            }
+
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Request failed: {e.Message}");
+        }
+
+    }
+
+    private Func<Schedule, string> _cellStyleFunc => x =>
+    {
+        string style = "";
+
+        if (x.run_type == 1)
+            style += "background-color:#8CED8C";
+
+        else if (x.run_type == 2)
+            style += "background-color:#E5BDE5";
+
+        else if (x.run_type == 3)
+            style += "background-color:#EACE5D";
+
+
+        return style;
+    };
+
+    
+}
