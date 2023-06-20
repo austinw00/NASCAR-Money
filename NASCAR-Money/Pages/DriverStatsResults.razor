@@ -395,6 +395,10 @@ else
 
     public string GetColor(double value, double minValue, double maxValue, bool isRedLow)
     {
+        if (value == 0)
+        {
+            return "white";
+        }
         double ratio;
         if (isRedLow)
         {

@@ -29,7 +29,9 @@ else
     <MudItem xs="12">
         <MudPaper Elevation="5" Class="d-flex align-center justify-center mud-width-full py-8">
             <MudGrid>
-                <MudItem xs="2"></MudItem>
+                    <MudItem xs="2" Class="d-flex align-items-center justify-content-center">
+                    <MudButton Variant="Variant.Filled" OnClick="() => NavigateToRaceCenter(year, seriesId, previousRaceId)">Previous Race</MudButton>
+                </MudItem>
                 <MudItem xs="8" Class="d-flex align-items-center justify-content-center">
                     <img src="@raceCenterViewModel.scheduleCombinedFeed.Race_Logo_Medium" style="height: 80px; width: auto; padding-right: 2%" />
                     <div class="text-center">
@@ -38,7 +40,9 @@ else
                         </div>
                     <img src="@raceCenterViewModel.scheduleCombinedFeed.Series_Logo" style="height: 80px; width: auto; padding-left: 2%" />
                 </MudItem>
-                <MudItem xs="2"></MudItem>
+                    <MudItem xs="2" Class="d-flex align-items-center justify-content-center">
+                        <MudButton Variant="Variant.Filled" OnClick="() => NavigateToRaceCenter(year, seriesId, nextRaceId)">Next Race</MudButton>
+                </MudItem>
             </MudGrid>
         </MudPaper>
     </MudItem>
@@ -195,15 +199,17 @@ else
                 <MudDataGrid Items="lapAverages.Items" Virtualize="true" FixedHeader="true" Height="500px" Striped="true" Dense="true">
                 <ToolBarContent>
                     <MudText Typo="Typo.h6">Practice Averages</MudText>
+                    <MudSpacer />
+                        <MudSwitch @bind-Checked="@colorFilterForLapAvgs" Color="Color.Primary">Color Filter</MudSwitch>
                 </ToolBarContent>
                 <Columns>
                     <PropertyColumn Property="x => x.Driver" Title="Driver" />
                     <PropertyColumn Property="x => Math.Round(x.OverAllAvg, 2)" Title="Overall Avg" />
-                    <PropertyColumn Property="x => x.OverAllAvgRank" Title="Overall Rank" />
-                    <PropertyColumn Property="x => x.Con5LapRank" Title="5 lap" />
-                    <PropertyColumn Property="x => x.Con10LapRank" Title="10 lap" />
-                    <PropertyColumn Property="x => x.Con15LapRank" Title="15 lap" />
-                    <PropertyColumn Property="x => x.Con20LapRank" Title="20 lap" />
+                        <PropertyColumn Property="x => x.OverAllAvgRank" Title="Overall Rank" CellStyleFunc="GetCellStyleFuncLapAvgs(v => v.OverAllAvgRank, 1, 40, true)" />
+                        <PropertyColumn Property="x => x.Con5LapRank" Title="5 lap" CellStyleFunc="GetCellStyleFuncLapAvgs(v => v.Con5LapRank, 1, 40, true)" />
+                    <PropertyColumn Property="x => x.Con10LapRank" Title="10 lap"  CellStyleFunc="GetCellStyleFuncLapAvgs(v => v.Con10LapRank, 1, 40, true)" />
+                    <PropertyColumn Property="x => x.Con15LapRank" Title="15 lap"  CellStyleFunc="GetCellStyleFuncLapAvgs(v => v.Con15LapRank, 1, 40, true)" />
+                        <PropertyColumn Property="x => x.Con20LapRank" Title="20 lap" CellStyleFunc="GetCellStyleFuncLapAvgs(v => v.Con20LapRank, 1, 40, true)" />
 
                 </Columns>
             </MudDataGrid>
@@ -219,7 +225,7 @@ else
 else
 {
     <div style="padding-top: 2%">
-    <MudDataGrid Items="@driverStats" Virtualize="true" Height="600px" FixedHeader="true" Dense="true" Striped="true" Bordered="true" Hover="true" PageSize="20" EditMode="@DataGridEditMode.Cell">
+        <MudDataGrid Items="@driverStats" Virtualize="true" Height="600px" FixedHeader="true" Dense="true" SortDefinitions="@initialSorts" Striped="true" Bordered="true" Hover="true" PageSize="20" EditMode="@DataGridEditMode.Cell">
         <ToolBarContent>
             @foreach (var track in tracks)
             {
@@ -345,6 +351,9 @@ else
     int minSampleSize;
     int maxSampleSize;
     private bool colorFilter;
+    private bool colorFilterForLapAvgs;
+    int nextRaceId;
+    int previousRaceId;
 
     private RaceCenterViewModel raceCenterViewModel;
 
@@ -368,6 +377,14 @@ else
                                 .Where(x => x.run_type == 1)
                                 .Select(x => x.start_time_utc)
                                 .FirstOrDefault();
+
+                nextRaceId = raceCenterViewModel.raceListBasic.series_1.Where(x => x.race_id > raceId).Select(x => x.race_id).FirstOrDefault();
+                previousRaceId = raceCenterViewModel.raceListBasic.series_1
+                                    .Where(x => x.race_id < raceId)
+                                    .OrderByDescending(x => x.race_id)
+                                    .Select(x => x.race_id)
+                                    .FirstOrDefault();
+
             }
             else if(seriesId == 2)
             {
@@ -383,6 +400,13 @@ else
                                 .Where(x => x.run_type == 1)
                                 .Select(x => x.start_time_utc)
                                 .FirstOrDefault();
+                nextRaceId = raceCenterViewModel.raceListBasic.series_2.Where(x => x.race_id > raceId).Select(x => x.race_id).FirstOrDefault();
+                previousRaceId = raceCenterViewModel.raceListBasic.series_2
+                                    .Where(x => x.race_id < raceId)
+                                    .OrderByDescending(x => x.race_id)
+                                    .Select(x => x.race_id)
+                                    .FirstOrDefault();
+
             }
             else
             {
@@ -398,6 +422,14 @@ else
                                 .Where(x => x.run_type == 1)
                                 .Select(x => x.start_time_utc)
                                 .FirstOrDefault();
+
+                nextRaceId = raceCenterViewModel.raceListBasic.series_3.Where(x => x.race_id > raceId).Select(x => x.race_id).FirstOrDefault();
+                previousRaceId = raceCenterViewModel.raceListBasic.series_3
+                                    .Where(x => x.race_id < raceId)
+                                    .OrderByDescending(x => x.race_id)
+                                    .Select(x => x.race_id)
+                                    .FirstOrDefault();
+
             }
 
             years = new List<int> { 2018, 2019, 2020, 2021, 2022, 2023 };
@@ -443,6 +475,11 @@ else
 
             minSampleSize = driverStats.Min(x => x.SampleSize);
             maxSampleSize = driverStats.Max(x => x.SampleSize);
+
+            colorFilterForLapAvgs = true;
+            colorFilter = true;
+
+            
 
         }
         catch (Exception e)
@@ -501,6 +538,10 @@ else
 
     public string GetColor(double value, double minValue, double maxValue, bool isRedLow)
     {
+        if (value == 0)
+        {
+            return "white";
+        }
         double ratio;
         if (isRedLow)
         {
@@ -518,5 +559,83 @@ else
         return $"hsl({h},{s}%,{l}%)";
     }
 
+    // Style the cells according to the values.
+    private Func<Item, string> GetCellStyleFuncLapAvgs(
+        Func<Item, int?> valueSelector, // change here
+        int minValue,
+        int maxValue,
+        bool isGreenLow) => x =>
+    {
+        string color = GetColorLapAvgs(valueSelector(x), minValue, maxValue, isGreenLow);
+        string style;
+        if (ThemeService.IsDarkMode)
+        {
+            style = $"background-color:{color}; color: black;";
+        }
+        else
+        {
+            style = $"background-color:{color};";
+        }
+
+        if (colorFilterForLapAvgs == true)
+        {
+
+        }
+        else
+        {
+            style = "";
+        }
+
+        return style;
+    };
+
+    public string GetColorLapAvgs(int? value, int minValue, int maxValue, bool isRedLow)
+    {
+        // Check if value is null
+        if (!value.HasValue)
+        {
+            // If it's null, return a default color, for example.
+            // Modify this as per your requirements.
+            return "grey";
+        }
+
+        double ratio;
+        if (isRedLow)
+        {
+            ratio = (value.Value - minValue) / (double)(maxValue - minValue);
+        }
+        else
+        {
+            ratio = (maxValue - value.Value) / (double)(maxValue - minValue);
+        }
+
+        var h = 120 - (int)(120 * ratio); // interpolating hue from 0 (red) to 120 (green)
+        const int s = 100; // saturation is always 100
+        const int l = 50; // lightness is always 50
+
+        return $"hsl({h},{s}%,{l}%)";
+    }
+
+    Dictionary<string, SortDefinition<DriverAverageStats>> initialSorts = new Dictionary<string, SortDefinition<DriverAverageStats>>
+    {
+        {
+            "Sample",
+            new SortDefinition<DriverAverageStats>("Sample", true, 1, item => item.SampleSize)
+        },
+        {
+            "Rating",
+            new SortDefinition<DriverAverageStats>("Rating", true, 2, item => item.AverageRating)
+        }
+    };
+
+    private void NavigateToRaceCenter(int yearParam, int seriesParam, int raceParam)
+    {
+        int year = yearParam;  // Replace with actual value
+        int seriesId = seriesParam;  // Replace with actual value
+        int raceId = raceParam;  // Replace with actual value
+
+        string url = $"/racecenter/{year}/{seriesId}/{raceId}";
+        NavigationManager.NavigateTo(url, forceLoad: true);
+    }
     
 }
