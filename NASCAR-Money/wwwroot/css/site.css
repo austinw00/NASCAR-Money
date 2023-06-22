@@ -63,4 +63,16 @@ a, .btn-link {
         content: "An error has occurred."
     }
 
+.center-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.image-margin {
+    margin: 0 10px; /* adjust the value as needed */
+}
+
+.center-text {
+    text-align: center;
+}

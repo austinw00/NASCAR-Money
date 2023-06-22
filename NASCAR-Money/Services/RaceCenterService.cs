@@ -34,5 +34,24 @@ namespace NASCAR_Money.Services
             };
             return raceCenterViewModel;
         }
+
+        public async Task<IndexViewModel> GetIndexViewModel(int cupRaceId, int xfinityRaceId, int truckRaceId)
+        {
+            var _scheduleCombinedFeedCup = await _cacheService.GetScheduleCombinedFeedAsync(DateTime.Now.Year, 1);
+            var _scheduleCombinedFeedXfinity = await _cacheService.GetScheduleCombinedFeedAsync(DateTime.Now.Year, 2);
+            var _scheduleCombinedFeedTruck = await _cacheService.GetScheduleCombinedFeedAsync(DateTime.Now.Year, 3);
+
+
+            var indexViewModel = new IndexViewModel
+            {
+                CupDetails = _scheduleCombinedFeedCup.response.Where(x => x.Race_Id == cupRaceId).FirstOrDefault(),
+                XfinityDetails = _scheduleCombinedFeedXfinity.response.Where(x => x.Race_Id == xfinityRaceId).FirstOrDefault(),
+                TruckDetails = _scheduleCombinedFeedTruck.response.Where(x => x.Race_Id == truckRaceId).FirstOrDefault()
+            };
+
+            return indexViewModel;
+        }
+
+
     }
 }

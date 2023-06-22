@@ -1,5 +1,11 @@
 ﻿@page "/"
 @inject NASCAR_Money.Helpers.IEventIdHelper EventIdHelper
+@inject NASCAR_Money.Data.NascarCache.ICacheService CacheService
+@inject NASCAR_Money.Services.IRaceCenterService RaceCenterService
+@inject NavigationManager NavManager
+@using NASCAR_Money.Models
+@using NASCAR_Money.Models.ViewModels
+
 @using System
 
 <PageTitle>Index</PageTitle>
@@ -11,24 +17,81 @@
     The upcoming cup event id: @previousCupEventId
 
 </p>
-@if (upcomingCupEventId == 0 || upcomingCupEventId == null)
+@if (upcomingCupEventId == 0 || upcomingCupEventId == null || indexViewModel == null)
 {
    <h1>loading</h1>
 }
 else
 {
-    <NASCAR_Money.Pages.Components.RaceWeekend year="2023" seriesId="1" eventId="@upcomingCupEventId"> </NASCAR_Money.Pages.Components.RaceWeekend>
+<MudGrid>
+        <MudItem xs="4">
+            <MudCard>
+                <MudCardHeader Class="center-images">
+                    <MudImage Class="image-margin" ObjectPosition="ObjectPosition.Top" Src="@indexViewModel.CupDetails.Series_Logo" Height="95" />
+                    <MudImage Class="image-margin" ObjectPosition="ObjectPosition.Top" Src="@indexViewModel.CupDetails.Race_Logo_Medium" Height="70" />
+                </MudCardHeader>
+                <MudCardContent Class="center-text">
+                    <MudText Typo="Typo.h5">Xfinity Series - @indexViewModel.CupDetails.Race_Name</MudText>
+                    <MudText Typo="Typo.h6">@indexViewModel.CupDetails.Track_Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Filled" OnClick="@(() => NavigateToDetails(indexViewModel.CupDetails.Race_Season, int.Parse(indexViewModel.CupDetails.Series_Id), indexViewModel.CupDetails.Race_Id))" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" FullWidth="true"><MudText Typo="Typo.h6">Go To Race Center</MudText></MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="4">
+            <MudCard>
+                <MudCardHeader Class="center-images">
+                    <MudImage Class="image-margin" ObjectPosition="ObjectPosition.Top" Src="@indexViewModel.XfinityDetails.Series_Logo" Height="95" />
+                    <MudImage Class="image-margin" ObjectPosition="ObjectPosition.Top" Src="@indexViewModel.XfinityDetails.Race_Logo_Medium" Height="70" />
+                </MudCardHeader>
+                <MudCardContent Class="center-text">
+                    <MudText Typo="Typo.h5">Xfinity Series - @indexViewModel.XfinityDetails.Race_Name</MudText>
+                    <MudText Typo="Typo.h6">@indexViewModel.XfinityDetails.Track_Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Filled" OnClick="@(() => NavigateToDetails(indexViewModel.XfinityDetails.Race_Season, int.Parse(indexViewModel.XfinityDetails.Series_Id), indexViewModel.XfinityDetails.Race_Id))" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" FullWidth="true"> <MudText Typo="Typo.h6">Go To Race Center</MudText></MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
 
+        <MudItem xs="4">
+            <MudCard>
+                <MudCardHeader Class="center-images">
+                    <MudImage Class="image-margin" ObjectPosition="ObjectPosition.Top" Src="@indexViewModel.TruckDetails.Series_Logo" Height="95" />
+                    <MudImage Class="image-margin" ObjectPosition="ObjectPosition.Top" Src="@indexViewModel.TruckDetails.Race_Logo_Medium" Height="70" />
+                </MudCardHeader>
+                <MudCardContent Class="center-text">
+                    <MudText Typo="Typo.h5">Xfinity Series - @indexViewModel.TruckDetails.Race_Name</MudText>
+                    <MudText Typo="Typo.h6">@indexViewModel.TruckDetails.Track_Name</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => NavigateToDetails(indexViewModel.TruckDetails.Race_Season, int.Parse(indexViewModel.TruckDetails.Series_Id), indexViewModel.TruckDetails.Race_Id))" EndIcon="@Icons.Material.Filled.ArrowForward" FullWidth="true"><MudText Typo="Typo.h6">Go To Race Center</MudText></MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+</MudGrid>
 }
 
 
 @code {
     private int upcomingCupEventId;
     private int previousCupEventId;
+    private int upcomingXfinityEventId;
+    private int upcomingTruckEventId;
+    private IndexViewModel indexViewModel;
 
     protected override async Task OnInitializedAsync()
     {
         previousCupEventId  = await EventIdHelper.GetPreviousCupEventId(DateTime.Now);
         upcomingCupEventId = await EventIdHelper.GetUpcomingCupEventId(DateTime.Now);
+        upcomingXfinityEventId = await EventIdHelper.GetUpcomingXfinityEventId(DateTime.Now);
+        upcomingTruckEventId = await EventIdHelper.GetUpcomingTruckEventId(DateTime.Now);
+
+        indexViewModel = await RaceCenterService.GetIndexViewModel(upcomingCupEventId, upcomingXfinityEventId, upcomingTruckEventId);
+    }
+    private void NavigateToDetails(int year, int seriesId, int raceId)
+    {
+        NavManager.NavigateTo($"/racecenter/{year}/{seriesId}/{raceId}");
     }
 }

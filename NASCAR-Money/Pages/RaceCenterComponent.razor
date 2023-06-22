@@ -37,6 +37,7 @@ else
                     <div class="text-center">
                         <h1 style="font-weight:bold">@raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().race_name</h1>
                             <h6>@raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().date_scheduled.ToString("dddd, MMMM dd, yyyy | hh:mm tt")</h6>
+                            <h6>@raceCenterViewModel.scheduleCombinedFeed.Race_TV</h6>
                         </div>
                     <img src="@raceCenterViewModel.scheduleCombinedFeed.Series_Logo" style="height: 80px; width: auto; padding-left: 2%" />
                 </MudItem>
@@ -52,14 +53,17 @@ else
                     <MudItem xs="12" Class="d-flex align-center justify-center">
                         <h2>@raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().race_name | @raceCenterViewModel.weekendFeed.weekend_race.FirstOrDefault().track_name</h2>
                     </MudItem>
-                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                    <MudItem xs="3" Class="d-flex align-center justify-center">
                         <img src="@raceCenterViewModel.trackInfo.TrackLogo" style="height:auto; width:200px" />
                     </MudItem>
-                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                    <MudItem xs="3" Class="d-flex align-center justify-center">
                         <img src="@raceCenterViewModel.scheduleCombinedFeed.Race_Logo_Medium" style="height:auto; width:200px" />
                     </MudItem>
-                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                    <MudItem xs="3" Class="d-flex align-center justify-center">
                         <img src="@raceCenterViewModel.trackInfo.TrackImageThumbnail" style="height:auto; width:200px" />
+                    </MudItem>
+                    <MudItem xs="3" Class="d-flex align-center justify-center">
+                        <img src="@raceCenterViewModel.scheduleCombinedFeed.Race_TV_Logo" style="height:auto; width:200px" />
                     </MudItem>
                     <MudItem xs="4" Class="d-flex align-center justify-center">
                         <div style="max-height: 320px; overflow-y: auto;">
@@ -113,9 +117,9 @@ else
                     </MudItem>
                     <MudItem xs="4">
                         <MudStack>
-                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Delete</MudButton>
-                            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Send" Color="Color.Primary">Send</MudButton>
-                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Custom.Uncategorized.Radioactive" Color="Color.Warning">Warning</MudButton>
+                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.DataExploration" Color="Color.Error">Previous Race Loop Stats</MudButton>
+                            <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.DashboardCustomize" Color="Color.Primary">Data Dashboard</MudButton>
+                            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Stadium" Color="Color.Warning">Track Data</MudButton>
                         </MudStack>
                     </MudItem>
                 </MudGrid>
