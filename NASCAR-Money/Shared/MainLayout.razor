@@ -41,8 +41,17 @@
         <MudSpacer />
         <MudSwitch Checked="@ThemeService.IsDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode" CheckedChanged="ToggleTheme" />
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        @*NavMenu*@
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="5">
+        <MudNavMenu Rounded="true" Margin="Margin.Dense" Color="Color.Primary" Class="pa-2">
+            <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.Prefix" Href="/components/navmenu" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
+            <MudNavLink Href="/thelab" Icon="@Icons.Material.Filled.Science">The Lab</MudNavLink>
+            <MudNavGroup Title="Race Center" Expanded="true">
+                <MudNavLink Href="/users">Cup Series</MudNavLink>
+                <MudNavLink Href="/security">Xfinity Series</MudNavLink>
+                <MudNavLink Href="/security">Truck Series</MudNavLink>
+            </MudNavGroup>
+        </MudNavMenu>
     </MudDrawer>
     <MudMainContent>
         <article class="content px-4">

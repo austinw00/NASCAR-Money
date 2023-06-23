@@ -1,0 +1,19 @@
+﻿index
+
+- - -
+= = = buttons that bring person to schedule views, shcedule views are the lists we see now
+
+
+race center component
+	whne going to old race, have button say 'race loop data' since it already happened
+	fix times
+
+
+
+
+
+
+
+	--------------------------------------
+
+	If not excecuting make sure deserialized to list

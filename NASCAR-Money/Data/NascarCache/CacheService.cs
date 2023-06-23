@@ -74,8 +74,8 @@ namespace NASCAR_Money.Data.NascarCache
             if (response.IsSuccessStatusCode)
             {
                 string jsonContent = await response.Content.ReadAsStringAsync();
-                LoopStats loopStats = JsonConvert.DeserializeObject<LoopStats>(jsonContent);
-                return loopStats;
+                List<LoopStats> loopStats = JsonConvert.DeserializeObject<List<LoopStats>>(jsonContent);
+                return loopStats.FirstOrDefault();
             }
 
             return null;

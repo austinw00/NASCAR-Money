@@ -482,8 +482,14 @@ else
 
             colorFilterForLapAvgs = true;
             colorFilter = true;
-
-            
+            var previousYearRaceList = await CacheService.GetRaceListBasicAsync(year - 1);
+            var oldRaceIds = previousYearRaceList.series_1.Where(x => x.race_season == 2022 && x.track_id == raceCenterViewModel.trackInfo.TrackId).Select(x => x.race_id).ToList();
+            List<LoopStats> oldLoops = new List<LoopStats>();
+            foreach (var oldRaceId in oldRaceIds)
+            {
+                var oldLoop = await CacheService.GetLoopStatsAsync(year - 1, seriesId, oldRaceId);
+                oldLoops.Add(oldLoop);
+            }
 
         }
         catch (Exception e)
